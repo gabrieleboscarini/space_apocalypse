@@ -91,13 +91,13 @@ public interface IModel {
 
      public void addBlock(LinkedList<GameObject> block);
 
-     public void setBlockElement(int i,int j, double x, double y );
+     public void setBlockElement(int i, int j, double x, double y);
 
-     public GameObject getBlockElement(int i,int j);
+     public GameObject getBlockElement(int i, int j);
 
-     public Rectangle getBlockElementRectangle(int i,int j);
+     public Rectangle getBlockElementRectangle(int i, int j);
 
-     public void removeBlockElement(int i,int j);
+     public void removeBlockElement(int i, int j);
 
      public GameObject getGameObject(int i);
 
@@ -105,8 +105,8 @@ public interface IModel {
 
      public void removeGameObject(int i);
 
-     public void setGameObjects(int i,double x, double y );
+     public void setGameObjects(int i, double x, double y);
 
-     public Rectangle getGameObjectRectangle(int i, String type);
+     public Rectangle getGameObjectRectangle(int i);
 
 }

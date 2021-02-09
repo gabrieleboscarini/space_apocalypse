@@ -2,9 +2,7 @@ package view;
 
 import controller.ControllerForView;
 import model.Model;
-
 import javax.imageio.ImageIO;
-import javax.jws.WebParam;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -12,82 +10,58 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 
-public class Game extends JPanel implements MouseMotionListener,MouseListener,KeyListener{
+public class Game extends JPanel implements MouseMotionListener,MouseListener,KeyListener,MouseWheelListener {
 
-    private final static int MARGIN = 10;
     private static Game instance = null;
-    private JPanel contentPane;
-
-    BufferedImage imgbackground = null;
-    BufferedImage player1 = null;
-    BufferedImage bullet = null;
-    BufferedImage enemy = null;
-    BufferedImage enemy2 = null;
-    BufferedImage enemyBullet = null;
-    BufferedImage explosion = null;
-
+    private final JPanel contentPane;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
     double height = screenSize.getHeight();
 
-    int XCenter = (int) (width*0.104/2);
-    int YCenter = (int) (height*0.108/2);
+    int XCenter = (int) (width * 0.0625 / 2);
+    int YCenter = (int) (height * 0.111 / 2);
+
+    public int angle = 0;
+    public int Bullet_Type = 1;
+
+    BufferedImage imgbackground,player1,player1_torretta1,player1_torretta2,player1_torretta3,
+            player1_torretta4,bullet1, bullet2, bullet3, bullet4 , capsul1, capsul2, capsul3 ,
+            capsul4, enemy,explosion;
+
+    HashMap<String,BufferedImage> imageMap = new HashMap<String, BufferedImage>();
 
     public Game(JPanel panel) {
 
         contentPane = panel;
         setFocusable(true);
         addMouseMotionListener(this);
+        addMouseWheelListener(this);
         addMouseListener(this);
         setBackground(Color.black);
         addKeyListener(this);
-        loadFiles();
+        loadImages();
         KeyActions();
     }
 
-    public void loadFiles(){
-        try {
-            this.imgbackground = ImageIO.read(new File("utils/img/sfondo_gameplay.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+    public void loadImages() {
 
-        try {
-            this.player1 = ImageIO.read(new File("utils/img/navicelladx.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        String[] strings = {"sfondo_gameplay", "Navicelladx", "Torretta_proiettile_1","Torretta_proiettile_2",
+                "Torretta_proiettile_3","Torretta_proiettile_4","Proiettile_1","Proiettile_2","Proiettile_3",
+                "Proiettile_4","Ast_1","Ast_2","Ast_3","Ast_4","nemico_1","esplosione"};
 
-        try {
-            this.bullet = ImageIO.read(new File("utils/img/bullet.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        BufferedImage[] images = {imgbackground, player1,player1_torretta1,player1_torretta2,player1_torretta3,
+                player1_torretta4,bullet1,bullet2,bullet3,bullet4,capsul1,capsul2,capsul3,capsul4,enemy,explosion};
 
-        try {
-            this.enemy = ImageIO.read(new File("utils/img/nemico_1.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        try {
-            this.enemy2 = ImageIO.read(new File("utils/img/nemico_2.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        try {
-            this.enemyBullet = ImageIO.read(new File("utils/img/nemico_2_bullet.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        try {
-            this.explosion = ImageIO.read(new File("utils/img/esplosione.png"));
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        for (int i = 0; i < images.length; i++) {
+            try {
+                images[i] = ImageIO.read(new File("utils/img/SP_SH/" + strings[i] + ".png"));
+                imageMap.put(strings[i],images[i]);
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
         }
 
         Toolkit toolkit = Toolkit.getDefaultToolkit();
@@ -101,11 +75,13 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         super.paintComponent(g);
 
-        g.drawImage(this.imgbackground, 0, 0, (int) (width), (int) height, null);
+        g.drawImage(imageMap.get("sfondo_gameplay"), 0, 0, (int) (width), (int) height, null);
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         drawSpaceShip(g2d);
+        drawSpaceShipTorretta(g2d);
         drawBlockElement(g2d);
         drawGameObject(g2d);
     }
@@ -114,89 +90,134 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         AffineTransform oldAT = g2d.getTransform();
         g2d.translate(XCenter+ ControllerForView.getInstance().spaceShipX(), YCenter+ ControllerForView.getInstance().spaceShipY());
+        g2d.rotate(Math.toRadians(angle));
+        g2d.translate(-XCenter,-YCenter);
+        g2d.drawImage(imageMap.get("Navicelladx"),0,0,XCenter*2, YCenter*2,null);
+        g2d.setTransform(oldAT);
+    }
+
+    public void drawSpaceShipTorretta(Graphics2D g2d){
+
+        AffineTransform oldAT = g2d.getTransform();
+        g2d.translate(XCenter+ ControllerForView.getInstance().spaceShipX(), YCenter+ ControllerForView.getInstance().spaceShipY());
         g2d.rotate(ControllerForView.getInstance().Angle());
         g2d.translate(-XCenter,-YCenter);
-        g2d.drawImage(player1,0,0,XCenter*2, YCenter*2,null);
+
+        for(int i=1; i<5; i++){
+            if(ControllerForView.getInstance().getMapElement("BulletType") == i){
+                g2d.drawImage(imageMap.get("Torretta_proiettile_" +i), 0, 0, XCenter * 2, YCenter * 2, null);
+            }
+        }
         g2d.setTransform(oldAT);
     }
 
     public void drawBlockElement(Graphics2D g2d){
-           for(int i=0; i<Model.getInstance().getblocklist().size(); i++){
-               for(int j=0; j<Model.getInstance().getBlock(i).size(); j++){
+        for(int i=0; i<Model.getInstance().getblocklist().size(); i++){
+            for(int j=0; j<Model.getInstance().getBlock(i).size(); j++){
 
-                   AffineTransform t2 = new AffineTransform();
-                   t2.translate(Model.getInstance().getBlockElement(i,j).getX(), Model.getInstance().getBlockElement(i,j).getY());
-                   t2.scale(width*0.00015, height*0.0003);
+                AffineTransform t2 = new AffineTransform();
+                t2.translate(Model.getInstance().getBlockElement(i,j).getX(), Model.getInstance().getBlockElement(i,j).getY());
+                t2.scale(width*0.000345, height*0.00062);
 
-                   if(Model.getInstance().getBlockElement(i,j).getType().equals("enemy"))
-                   g2d.drawImage(enemy, t2, null);
-                   if(Model.getInstance().getBlockElement(i,j).getType().equals("enemy2"))
-                       g2d.drawImage(enemy2, t2, null);
-               }
+                switch (Model.getInstance().getBlockElement(i, j).getType()) {
+                    case "capsul1":
+                        g2d.drawImage(imageMap.get("Ast_1"), t2, null);
+                        break;
+                    case "capsul2":
+                        g2d.drawImage(imageMap.get("Ast_2"), t2, null);
+                        break;
+                    case "capsul3":
+                        g2d.drawImage(imageMap.get("Ast_3"), t2, null);
+                        break;
+                    case "capsul4":
+                        g2d.drawImage(imageMap.get("Ast_4"), t2, null);
+                        break;
+                }
+            }
 
-           }
+        }
 
     }
 
     public void drawGameObject(Graphics2D g2d){
 
         for(int i=0; i<ControllerForView.getInstance().GameObjectList().size(); i++){
-            if(ControllerForView.getInstance().GameObject(i).getType().equals("bullet")){
-                AffineTransform t = new AffineTransform();
-                t.translate(ControllerForView.getInstance().GameObject(i).getX(),ControllerForView.getInstance().GameObject(i).getY());
-                t.scale(width*0.00002,height*0.000037 );
-                g2d.drawImage(bullet, t, null);
+
+            for(int k=1; k<5; k++){
+                if(ControllerForView.getInstance().GameObject(i).getType().equals("bullet"+k)){
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.0001, height * 0.00018);
+                    g2d.drawImage(imageMap.get("Proiettile_"+k), t, null);
+                    break;
+                }else ;
             }
-            if(ControllerForView.getInstance().GameObject(i).getType().equals("explosion")){
-                AffineTransform t = new AffineTransform();
-                t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
-                t.scale(width*ControllerForView.getInstance().GameObject(i).getScaleSX(), height * ControllerForView.getInstance().GameObject(i).getScaleDX());
-                g2d.drawImage(explosion, t, null);
+            switch (ControllerForView.getInstance().GameObject(i).getType()) {
+                case "explosion": {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * ControllerForView.getInstance().GameObject(i).getScaleSX(), height * ControllerForView.getInstance().GameObject(i).getScaleDX());
+                    g2d.drawImage(imageMap.get("esplosione"), t, null);
+                    break;
+                }
+                case "enemy": {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.00015, height * 0.0003);
+                    g2d.drawImage(imageMap.get("nemico_1"), t, null);
+                    break;
+                }
             }
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {}
-
-    @Override
     public void mouseMoved(MouseEvent e) {
 
-        double dx = e.getX() - ControllerForView.getInstance().spaceShipX()-(width*0.104 /2);
-        double dy = e.getY() - ControllerForView.getInstance().spaceShipY()-(height*0.108 /2);
+        double dx = e.getX() - ControllerForView.getInstance().spaceShipX()-(width*0.0625 /2);
+        double dy = e.getY() - ControllerForView.getInstance().spaceShipY()-(height*0.111 /2);
         ControllerForView.getInstance().ruotaSpaceShip(dx, dy);
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {
 
         if(e.getButton() == MouseEvent.BUTTON1) {
             ControllerForView.getInstance().setBooleanMapElement("shooting", true);
-            ControllerForView.getInstance().createBullet( ControllerForView.getInstance().spaceShipX()+(width*0.104/2),  ControllerForView.getInstance().spaceShipY()+(height*0.108/2), e.getX(), e.getY());
+            ControllerForView.getInstance().createGameObject( ControllerForView.getInstance().spaceShipX()+(width*0.04/2),
+                    ControllerForView.getInstance().spaceShipY()+(height*0.068/2), e.getX(),
+                    e.getY(),"bullet"+ ControllerForView.getInstance().getMapElement("BulletType"));
+            AudioManager.getInstance().PlayShoot();
+        }
+        if(e.getButton() == MouseEvent.BUTTON2) {
+            ControllerForView.getInstance().setBooleanMapElement("shooting", true);
+            ControllerForView.getInstance().createGameObject( ControllerForView.getInstance().spaceShipX()+(width*0.04/2),  ControllerForView.getInstance().spaceShipY()+(height*0.068/2), e.getX(), e.getY(),"bullet");
             AudioManager.getInstance().PlayShoot();
         }
     }
 
-    @Override
-    public void mouseReleased(MouseEvent e) {}
+    public void mouseWheelMoved(MouseWheelEvent e){
 
-    @Override
-    public void mouseEntered(MouseEvent e) {}
+        int bulletType = ControllerForView.getInstance().getMapElement("BulletType");
 
-    @Override
-    public void mouseExited(MouseEvent e) {}
+        if(e.getWheelRotation() < 0) {
+            if (bulletType < 4) {
+                bulletType++;
+                ControllerForView.getInstance().setMapElement("BulletType", bulletType);
+            }else{
+                ControllerForView.getInstance().setMapElement("BulletType", 1);
+            }
+        }
+        else if(e.getWheelRotation() > 0){
+            if (bulletType > 1) {
+                bulletType--;
+                ControllerForView.getInstance().setMapElement("BulletType", bulletType);
+            }else{
+                ControllerForView.getInstance().setMapElement("BulletType", 4);
+            }
+        }
 
-    public Game getInstance() {
-        if (instance == null)
-            instance = new Game(this);
-        return instance;
     }
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -205,10 +226,8 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
             cardLayout.show(contentPane, "pause");
             ControllerForView.getInstance().setBooleanMapElement("isRunning", false);
         }
-    }
 
-    @Override
-    public void keyReleased(KeyEvent e) {}
+    }
 
     public void KeyActions(){
         setInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, getInputMap());
@@ -217,11 +236,23 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         KeyStroke key2 = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0);
         KeyStroke key3 = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
         KeyStroke key4 = KeyStroke.getKeyStroke(KeyEvent.VK_S, 0);
+
+        KeyStroke key5 = KeyStroke.getKeyStroke(KeyEvent.VK_1, 0);
+        KeyStroke key6 = KeyStroke.getKeyStroke(KeyEvent.VK_2, 0);
+        KeyStroke key7 = KeyStroke.getKeyStroke(KeyEvent.VK_3, 0);
+        KeyStroke key8 = KeyStroke.getKeyStroke(KeyEvent.VK_4, 0);
+
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key, "pressedesc");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key1, "pressedW");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key2, "pressedA");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key3, "pressedD");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key4, "pressedS");
+
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key5, "Bullet_1");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key6, "Bullet_2");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key7, "Bullet_3");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key8, "Bullet_4");
+
         getActionMap().put("pressedesc", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
                 CardLayout cardLayout = (CardLayout) contentPane.getLayout();
@@ -238,6 +269,8 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
+                angle = 270;
+                repaint();
             }
         });
 
@@ -248,6 +281,8 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
+                angle = 180;
+                repaint();
             }
         });
 
@@ -258,6 +293,8 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
+                angle = 0;
+                repaint();
             }
         });
 
@@ -268,7 +305,53 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
+                angle = 90;
+                repaint();
             }
         });
+
+        getActionMap().put("Bullet_1", new AbstractAction(){
+            public void actionPerformed(ActionEvent arg0) {
+                Bullet_Type = 1;
+                repaint();
+            }
+        });
+
+        getActionMap().put("Bullet_2", new AbstractAction(){
+            public void actionPerformed(ActionEvent arg0) {
+                Bullet_Type = 2;
+                repaint();
+            }
+        });
+
+        getActionMap().put("Bullet_3", new AbstractAction(){
+            public void actionPerformed(ActionEvent arg0) {
+                Bullet_Type = 3;
+                repaint();
+            }
+        });
+
+        getActionMap().put("Bullet_4", new AbstractAction(){
+            public void actionPerformed(ActionEvent arg0) {
+                Bullet_Type = 4;
+                repaint();
+            }
+        });
+
     }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+    @Override
+    public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseDragged(MouseEvent e) {}
+    @Override
+    public void keyTyped(KeyEvent e) {}
+    @Override
+    public void keyReleased(KeyEvent e) {}
 }

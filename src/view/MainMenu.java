@@ -23,7 +23,6 @@ public class MainMenu extends JPanel implements MouseInputListener{
     private Rectangle2D.Double exit;
 
     BufferedImage img = null;
-    BufferedImage imgtitle = null;
     BufferedImage imgstart = null;
     BufferedImage imgexit = null;
     BufferedImage imgfbstart = null;
@@ -45,13 +44,6 @@ public class MainMenu extends JPanel implements MouseInputListener{
 
         try{
             this.img = ImageIO.read(new File("utils/img/sfondo_1.png"));
-        }
-        catch(IOException ioe){
-            ioe.printStackTrace();
-        }
-
-        try{
-            this.imgtitle = ImageIO.read(new File("utils/img/titolo_0.png"));
         }
         catch(IOException ioe){
             ioe.printStackTrace();
@@ -97,11 +89,6 @@ public class MainMenu extends JPanel implements MouseInputListener{
         super.paintComponent(g);
 
         g.drawImage(this.img, 0,0, (int) (width), (int) height, null);
-        // Insert here our drawing
-
-        Graphics2D gt2d = (Graphics2D)g;
-
-        gt2d.drawImage(this.imgtitle, 0, 0, (int) (width), (int) (height), null);
         // Insert here our drawing
 
         Graphics2D gs2d = (Graphics2D)g;

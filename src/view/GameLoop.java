@@ -26,7 +26,7 @@ public class GameLoop implements Runnable {
         long now = System.nanoTime();
         long diff;
         while ((diff = System.nanoTime() - now) < sleepTime) {
-            if (diff < sleepTime*0.8) {
+            if (diff < sleepTime * 0.8) {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException exc) {

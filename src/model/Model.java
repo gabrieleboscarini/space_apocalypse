@@ -23,7 +23,7 @@ public class Model implements IModel {
     private LinkedList<LinkedList<GameObject>> blockList = new LinkedList<LinkedList<GameObject>>();
 
     private boolean isRunning, shooting, isExploding,resetGame, gameover,MoveUp,MoveDown,MoveRight,MoveLeft,Move,freccia_su,freccia_giu;
-    private int score,unita,decine,centinaia,migliaia,index1,avanzamento;
+    private int BulletType, score,unita,decine,centinaia,migliaia,index1,avanzamento;
 
     private HashMap<String ,Integer> indexmap = new HashMap<>();
     private HashMap<String,Boolean> booleanMap =  new HashMap<>();
@@ -33,9 +33,10 @@ public class Model implements IModel {
     }
 
     public void initGame(){
-        spaceShip = new GameObject((int) ((width/2)-(width*0.104/2)),(int) ((height/2)-(height*0.108/2)), 0,0,"spaceship");
+        spaceShip = new GameObject((int) ((width/2)-(width*0.0625/2)),(int) ((height/2)-(height*0.111/2)), 0,0,"spaceship");
         loadBooleanVar();
         loadIndexVar();
+        setMapElement("BulletType", 1);
     }
 
     public void loadBooleanVar(){
@@ -49,8 +50,8 @@ public class Model implements IModel {
     }
 
     public void loadIndexVar(){
-        Integer[] var = {score,unita,decine,centinaia,migliaia,index1,avanzamento};
-        String[] keys = {"score","unita","decine","centinaia","migliaia","index1","avanzamento"};
+        Integer[] var = {BulletType,score,unita,decine,centinaia,migliaia,index1,avanzamento};
+        String[] keys = {"BulletType","score","unita","decine","centinaia","migliaia","index1","avanzamento"};
         for(int i=0; i<var.length; i++){
             indexmap.put(keys[i],var[i]);
         }
@@ -119,8 +120,8 @@ public class Model implements IModel {
         TempBlock = blockList.get(i);
         TempBlockElement = TempBlock.get(j);
         return TempBlockElement.ObjectRectangle(
-                (int)TempBlockElement.getX()+(int) ((width*0.06)/4),
-                (int) TempBlockElement.getY()+(int) ((height*0.066)/4), (int) ((width*0.06)/2), (int) ((height*0.066)/2));
+                (int)TempBlockElement.getX()+(int) ((width*0.0417)/4),
+                (int) TempBlockElement.getY()+(int) ((height*0.074)/4), (int) ((width*0.0417)/2), (int) ((height*0.074)/2));
     }
 
     public GameObject getGameObject(int i){
@@ -148,15 +149,19 @@ public class Model implements IModel {
         }
     }
 
-    public Rectangle getGameObjectRectangle(int i, String type){
+    public Rectangle getGameObjectRectangle(int i){
         TempObject = gameObjects.get(i);
         Rectangle rect=null;
-        if(type.equals("bullet")){
-            rect = TempObject.ObjectRectangle((int)TempObject.getX()+(int) ((width*0.01894)/4),
-                    (int) TempObject.getY()+(int) ((height*0.031191)/4), (int) ((width*0.01894)/2),
-                    (int) ((height*0.031191)/2));
-        }
-        return rect;
+            if (TempObject.getType().equals("bullet1") || TempObject.getType().equals("bullet2") || TempObject.getType().equals("bullet3") || TempObject.getType().equals("bullet4")) {
+                rect = TempObject.ObjectRectangle((int) TempObject.getX() + (int) ((width * 0.01894) / 4),
+                        (int) TempObject.getY() + (int) ((height * 0.031191) / 4), (int) ((width * 0.01894) / 2),
+                        (int) ((height * 0.031191) / 2));
+            }
+            if (TempObject.getType().equals("enemy")) {
+                rect = TempObject.ObjectRectangle((int) TempObject.getX() + (int) ((width * 0.06) / 4),
+                        (int) TempObject.getY() + (int) ((height * 0.066) / 4), (int) ((width * 0.06) / 2), (int) ((height * 0.066) / 2));
+            }
+            return rect;
     }
 
     public double getSpaceShipX(){
@@ -174,8 +179,8 @@ public class Model implements IModel {
 
     public Rectangle getSpaceShipRectangle(){
         return spaceShip.ObjectRectangle(
-                (int)spaceShip.getX()+ (int) ((width*0.104)/4),
-                (int)spaceShip.getY()+ (int) ((height*0.108)/4), (int) ((width*0.104)/2), (int) ((height*0.108)/2));
+                (int)spaceShip.getX()+ (int) ((width*0.0625)/4),
+                (int)spaceShip.getY()+ (int) ((height*0.111)/4), (int) ((width*0.0625)/2), (int) ((height*0.111)/2));
     }
 
     public double getAngle(){
@@ -189,7 +194,7 @@ public class Model implements IModel {
     public void clearGame(){
         gameObjects.clear();
         blockList.clear();
-        setSpaceShip(((width/2)-(width*0.104/2)), ((height/2)-(height*0.108/2)));
+        setSpaceShip(((width/2)-(width*0.0625/2)), ((height/2)-(height*0.111/2)));
         setMapElement("score", 0);
     }
 

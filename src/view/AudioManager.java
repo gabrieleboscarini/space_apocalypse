@@ -52,6 +52,11 @@ public class AudioManager {
     AudioInputStream aInput4 = null;
     Clip aud4 = null;
 
+    String audio5 ="utils/msc/cocomero.wav";
+    File audioPath5 = new File(audio5);
+    AudioInputStream aInput5 = null;
+    Clip aud5 = null;
+
     public void PlayMainMenuSong(){
 
         try {
@@ -155,6 +160,7 @@ public class AudioManager {
     }
 
     public void PlayGameOverSe(){
+
         try {
             aInput4 = AudioSystem.getAudioInputStream(audioPath4);
             aud4 = AudioSystem.getClip();
@@ -164,6 +170,21 @@ public class AudioManager {
             ex.printStackTrace();
         }
     }
+
+    public void PlayCocomero(){
+
+        try {
+            aInput5 = AudioSystem.getAudioInputStream(audioPath5);
+            aud5 = AudioSystem.getClip();
+            aud5.open(aInput5);
+            aud5.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+
 
     public static AudioManager getInstance() {
         if (instance == null)

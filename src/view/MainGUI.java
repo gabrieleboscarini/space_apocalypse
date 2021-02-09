@@ -11,7 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 
-public class MainGUI extends JFrame{
+public class MainGUI extends JFrame {
 
     private JPanel contentPane;
     private MainMenu mainmenu;
@@ -32,7 +32,7 @@ public class MainGUI extends JFrame{
     JLabel score = new JLabel("Score: 0");
 
 
-    public MainGUI(){
+    public MainGUI() {
 
         super("menu...");
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -61,7 +61,7 @@ public class MainGUI extends JFrame{
         setContentPane(contentPane);
 
         score.setOpaque(false);
-        score.setFont(new Font("times", 15, (int)(width*0.015)));
+        score.setFont(new Font("times", 15, (int) (width * 0.015)));
         game.add(score);
 
         pack();
@@ -72,9 +72,9 @@ public class MainGUI extends JFrame{
         TimerManager();
     }
 
-    public void updateGame(){
+    public void updateGame() {
 
-        if(ControllerForView.getInstance().getBooleanMapElement("isRunning")) {
+        if (ControllerForView.getInstance().getBooleanMapElement("isRunning")) {
 
             ControllerForView.getInstance().collision();
             ControllerForView.getInstance().moveGameObject();
@@ -87,12 +87,12 @@ public class MainGUI extends JFrame{
             score.setText("Score: " + ControllerForView.getInstance().getMapElement("score"));
 
 
-            if(ControllerForView.getInstance().getBooleanMapElement("Move")){
+            if (ControllerForView.getInstance().getBooleanMapElement("Move")) {
                 ControllerForView.getInstance().MoveSpaceShip();
             }
         }
 
-        if(ControllerForView.getInstance().getBooleanMapElement("resetGame")){
+        if (ControllerForView.getInstance().getBooleanMapElement("resetGame")) {
             timer.resetGame();
             timer2.resetGame();
             timer3.resetGame();
@@ -105,12 +105,12 @@ public class MainGUI extends JFrame{
         gameloop.start();
     }
 
-    public void TimerManager(){
+    public void TimerManager() {
 
         timer = new GameTimer(70) {
             @Override
             public void action() {
-               // ControllerForView.getInstance().createEnemy(1);
+                // ControllerForView.getInstance().createEnemy(1);
                 ControllerForView.getInstance().createBlockElement();
 
             }
@@ -126,13 +126,13 @@ public class MainGUI extends JFrame{
         timer3 = new GameTimer(100) {
             @Override
             public void action() {
-               // ControllerForView.getInstance().enemyFire();
+                // ControllerForView.getInstance().enemyFire();
             }
         };
     }
 
-    public void playGameOver(){
-        if(ControllerForView.getInstance().getBooleanMapElement("gameover")){
+    public void playGameOver() {
+        if (ControllerForView.getInstance().getBooleanMapElement("gameover")) {
             CardLayout cardLayout = (CardLayout) contentPane.getLayout();
             cardLayout.show(contentPane, "game_over");
         }
@@ -143,6 +143,5 @@ public class MainGUI extends JFrame{
             instance = new MainGUI();
         return instance;
     }
-
 
 }

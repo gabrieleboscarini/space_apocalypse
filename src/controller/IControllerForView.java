@@ -21,37 +21,21 @@ public interface IControllerForView {
 
     double Angle();
 
-    void createBullet(double x, double y, double dx, double dy);
-
-    void createEnemyBullet(double x, double y, double dx, double dy);
-
-    void createExplosion(double x, double y);
-
     public LinkedList<GameObject> GameObjectList();
 
     void createBlockElement();
 
-    public void removeBlockElement(int i, String type);
+    public void removeBlockElement(int i,GameObject object,String btype);
 
     public void collisionDetection0();
 
     public void collisionDetection1();
-
-  //  public void collisionDetection2();
-
-  //  public void collisionDetection3();
-
-  //  public void collisionDetection4();
-
- //   public void collisionDetection5();
 
     public void collision();
 
     public void clearGame();
 
     public void clearGameOver();
-
-   // public int Score();
 
     void increaseScore(int i);
 
@@ -75,8 +59,10 @@ public interface IControllerForView {
 
     public GameObject GameObject(int i);
 
+    public GameObject BlockElement(int i, int j);
+
+    public void createGameObject(double x, double y, double dx, double dy, String type);
+
     public void moveGameObject();
-
-
 
 }

@@ -39,7 +39,7 @@ public class Tutorial extends JPanel implements MouseListener {
         }
 
         try {
-            this.ship = ImageIO.read(new File("utils/img/navicelladx.png"));
+            this.ship = ImageIO.read(new File("utils/img/SP_SH/navicelladx.png"));
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -50,7 +50,7 @@ public class Tutorial extends JPanel implements MouseListener {
         super.paintComponent(g);
 
         g.drawImage(img, 0, 0, (int) width, (int) height, null);
-        g.drawImage(ship,(int)ControllerForView.getInstance().spaceShipX(), (int)ControllerForView.getInstance().spaceShipY(),(int) (width*0.104), (int) (height*0.108),null);
+        g.drawImage(ship,(int)ControllerForView.getInstance().spaceShipX(), (int)ControllerForView.getInstance().spaceShipY(),(int) (width*0.0625), (int) (height*0.111),null);
 
     }
 
@@ -93,4 +93,5 @@ public class Tutorial extends JPanel implements MouseListener {
     public void mouseExited(MouseEvent mouseEvent) {
 
     }
+
 }
