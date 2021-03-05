@@ -2,8 +2,8 @@ package view;
 
 public interface IView {
 
-    public void openStartWindow();
+    void openStartWindow();
 
-    public void closeStartWindow();
+    void closeStartWindow();
 
 }

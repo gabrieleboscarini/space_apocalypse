@@ -1,7 +1,6 @@
 package view;
 
 import controller.ControllerForView;
-import model.GameObject;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,7 +16,7 @@ import java.util.LinkedList;
 
 public class Game_Over extends JPanel implements MouseInputListener {
 
-    private JPanel contentPane;
+    private final JPanel contentPane;
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
@@ -32,7 +31,7 @@ public class Game_Over extends JPanel implements MouseInputListener {
     BufferedImage a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
     BufferedImage img, nemici, navicella, imgmenu, imgexit, imgfbmenu, imgfbexit, S_Y_N, freccia, nickname, score, champion;
 
-    private Rectangle2D.Double freccia_su1, freccia_giu1, freccia_su2, freccia_giu2, freccia_su3, freccia_giu3, menu, exit;
+    private final Rectangle2D.Double freccia_su1, freccia_giu1, freccia_su2, freccia_giu2, freccia_su3, freccia_giu3, menu, exit;
 
 
     private boolean fbfrecciasu;
@@ -45,8 +44,8 @@ public class Game_Over extends JPanel implements MouseInputListener {
     private int indice2 = 0;
     private int indice3 = 0;
 
-    private LinkedList<BufferedImage> list = new LinkedList<BufferedImage>();
-    private LinkedList<BufferedImage> list1 = new LinkedList<BufferedImage>();
+    private final LinkedList<BufferedImage> list = new LinkedList<>();
+    private final LinkedList<BufferedImage> list1 = new LinkedList<>();
 
     public Game_Over(JPanel panel) {
 
@@ -191,16 +190,11 @@ public class Game_Over extends JPanel implements MouseInputListener {
             drawScore(g2d, (int) (width * 0.68), (int) (height * 0.5), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().getMapElement("decine"));
             drawScore(g2d, (int) (width * 0.73), (int) (height * 0.5), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().getMapElement("unita"));
 
-            int mi = ControllerForView.getInstance().getMapElement("migliaia");
-            int ce = ControllerForView.getInstance().getMapElement("centinaia");
-            int de = ControllerForView.getInstance().getMapElement("decine");
-            int u = ControllerForView.getInstance().getMapElement("unita");
-            String punteggiocorrente = "" + mi + ce + de + u;
-            int puntcor = Integer.parseInt(punteggiocorrente);
+            int puntcor = ControllerForView.getInstance().getMapElement("score");
             try {
-                if (puntcor > PunteggioCampione())
-                    Savepunteggio(indice1, indice2, indice3, ControllerForView.getInstance().getMapElement("unita"),
-                            ControllerForView.getInstance().getMapElement("decine"), ControllerForView.getInstance().getMapElement("centinaia"),
+                if (puntcor > ControllerForView.getInstance().readChampion("champ", 0))
+                    ControllerForView.getInstance().Savepunteggio(indice1, indice2, indice3,ControllerForView.getInstance().getMapElement("unita"),
+                            ControllerForView.getInstance().getMapElement("decine") , ControllerForView.getInstance().getMapElement("centinaia"),
                             ControllerForView.getInstance().getMapElement("migliaia"));
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -208,18 +202,18 @@ public class Game_Over extends JPanel implements MouseInputListener {
 
             //nickname and score of the champion
             try {
-                drawNickName(g2d, (int) (width * 0.245), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ReadIndice0());
-                drawNickName(g2d, (int) (width * 0.305), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ReadIndice1());
-                drawNickName(g2d, (int) (width * 0.365), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ReadIndice2());
+                drawNickName(g2d, (int) (width * 0.245), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().readChampion("nickname",0));
+                drawNickName(g2d, (int) (width * 0.305), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08),  ControllerForView.getInstance().readChampion("nickname",1));
+                drawNickName(g2d, (int) (width * 0.365), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08),  ControllerForView.getInstance().readChampion("nickname",2));
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
 
             try {
-                drawScore(g2d, (int) (width * 0.58), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), MigliaiaCampione());
-                drawScore(g2d, (int) (width * 0.63), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), CentinaiaCampione());
-                drawScore(g2d, (int) (width * 0.68), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), DecineCampione());
-                drawScore(g2d, (int) (width * 0.73), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), UnitaCampione());
+                drawScore(g2d, (int) (width * 0.58), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().readChampion("Champ_score",0));
+                drawScore(g2d, (int) (width * 0.63), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().readChampion("Champ_score",1));
+                drawScore(g2d, (int) (width * 0.68), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().readChampion("Champ_score",2));
+                drawScore(g2d, (int) (width * 0.73), (int) (height * 0.7), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().readChampion("Champ_score",3));
             } catch (IOException ioException) {
                 ioException.printStackTrace();
             }
@@ -236,21 +230,15 @@ public class Game_Over extends JPanel implements MouseInputListener {
     }
 
     public void drawNickName(Graphics2D g2d, int x1, int y1, int x2, int y2, int indice) {
-
         g2d.drawImage(list.get(indice), x1, y1, x2, y2, null);
-
     }
 
     public void drawArrowLightUp(Graphics2D g2d, int x1, int y1, int x2, int y2) {
-
         g2d.drawImage(list1.get(3), x1, y1, x2, y2, null);
-
     }
 
     public void drawArrowLightDown(Graphics2D g2d, int x1, int y1, int x2, int y2) {
-
         g2d.drawImage(list1.get(4), x1, y1, x2, y2, null);
-
     }
 
     public void drawArrowUp(Graphics2D g2d, int x1, int y1, int x2, int y2) {
@@ -327,12 +315,18 @@ public class Game_Over extends JPanel implements MouseInputListener {
         getActionMap().put("pressedUp", new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
                 moveArrowUp();
+                ControllerForView.getInstance().setBooleanMapElement("freccia_su", true);
+                ControllerForView.getInstance().setBooleanMapElement("freccia_giu", false);
+                repaint();
             }
         });
 
         getActionMap().put("releaseUp", new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
                 moveArrowDown();
+                ControllerForView.getInstance().setBooleanMapElement("freccia_su", false);
+                ControllerForView.getInstance().setBooleanMapElement("freccia_giu", true);
+                repaint();
             }
         });
     }
@@ -376,33 +370,16 @@ public class Game_Over extends JPanel implements MouseInputListener {
                 AudioManager.getInstance().StopGameOverSong();
                 AudioManager.getInstance().PlayMainMenuSong();
                 ControllerForView.getInstance().setBooleanMapElement("gameover", false);
+                ControllerForView.getInstance().clearGame();
                 ControllerForView.getInstance().clearGameOver();
-
+                indice1 = 0;
+                indice2 = 0;
+                indice3 = 0;
             }
             if (this.exit.contains(e.getX(), e.getY()))
                 System.exit(0);
             this.repaint();
         }
-
-    }
-
-    public void mousePressed(MouseEvent mouseEvent) {
-
-    }
-
-    public void mouseReleased(MouseEvent mouseEvent) {
-
-    }
-
-    public void mouseEntered(MouseEvent mouseEvent) {
-
-    }
-
-    public void mouseExited(MouseEvent mouseEvent) {
-
-    }
-
-    public void mouseDragged(MouseEvent mouseEvent) {
 
     }
 
@@ -413,134 +390,31 @@ public class Game_Over extends JPanel implements MouseInputListener {
 
         for (int i = 0; i < 3; i++) {
             if (ControllerForView.getInstance().getMapElement("avanzamento") == i) {
-                if (freccia_su[i].contains(e.getX(), e.getY())) {
-                    fbfrecciasu = true;
-                    this.repaint();
-                } else {
-                    fbfrecciasu = false;
-                    this.repaint();
-                }
-                if (freccia_giu[i].contains(e.getX(), e.getY())) {
-                    fbfrecciagiu = true;
-                    this.repaint();
-                } else {
-                    fbfrecciagiu = false;
-                    this.repaint();
-                }
+                fbfrecciasu = freccia_su[i].contains(e.getX(), e.getY());
+                fbfrecciagiu = freccia_giu[i].contains(e.getX(), e.getY());
+                ControllerForView.getInstance().setBooleanMapElement("freccia_su", fbfrecciasu);
+                ControllerForView.getInstance().setBooleanMapElement("freccia_giu", fbfrecciagiu);
+                this.repaint();
 
             }
         }
 
         if (ControllerForView.getInstance().getMapElement("avanzamento") == 3) {
-            if (this.menu.contains(e.getX(), e.getY())) {
-                fbmenu = true;
-                this.repaint();
-            } else {
-                fbmenu = false;
-                this.repaint();
-            }
-
-            if (this.exit.contains(e.getX(), e.getY())) {
-                fbexit = true;
-                this.repaint();
-            } else {
-                fbexit = false;
-                this.repaint();
-            }
+            fbmenu = this.menu.contains(e.getX(), e.getY());
+            fbexit = this.exit.contains(e.getX(), e.getY());
+            ControllerForView.getInstance().setBooleanMapElement("freccia_su", fbfrecciasu);
+            ControllerForView.getInstance().setBooleanMapElement("freccia_giu", fbfrecciagiu);
+            this.repaint();
         }
     }
 
-    public void Savepunteggio(int indice0, int indice1, int indice2, int unita, int decine, int centinaia, int migliaia) throws IOException {
-        File save = new File("champion.txt");
-        FileWriter fw = new FileWriter(save);
-        String s = indice0 + "." + indice1 + "." + indice2 + "." + migliaia + centinaia + decine + unita + ".";
-        fw.write(s);
-        fw.flush();
-        fw.close();
+    public void mousePressed(MouseEvent mouseEvent) {}
 
-    }
+    public void mouseReleased(MouseEvent mouseEvent) {}
 
-    public int ReadIndice0() throws IOException {
-        int indice0 = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String ind0 = splits[0];
-        indice0 = Integer.parseInt(ind0);
-        return indice0;
-    }
+    public void mouseEntered(MouseEvent mouseEvent) {}
 
-    public int ReadIndice1() throws IOException {
-        int indice1 = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String ind1 = splits[1];
-        indice1 = Integer.parseInt(ind1);
-        return indice1;
-    }
+    public void mouseExited(MouseEvent mouseEvent) {}
 
-    public int ReadIndice2() throws IOException {
-        int indice2 = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String ind2 = splits[2];
-        indice2 = Integer.parseInt(ind2);
-        return indice2;
-    }
-
-    public int PunteggioCampione() throws IOException {
-        int puncamp = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String pc = splits[3];
-        puncamp = Integer.parseInt(pc);
-        return puncamp;
-    }
-
-    public int UnitaCampione() throws IOException {
-        int uc = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String pc = splits[3];
-        char u = pc.charAt(3);
-        uc = Character.getNumericValue(u);
-        return uc;
-    }
-
-    public int DecineCampione() throws IOException {
-        int dec = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String pc = splits[3];
-        char de = pc.charAt(2);
-        dec = Character.getNumericValue(de);
-        return dec;
-    }
-
-    public int CentinaiaCampione() throws IOException {
-        int cenc = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String pc = splits[3];
-        char cen = pc.charAt(1);
-        cenc = Character.getNumericValue(cen);
-        return cenc;
-    }
-
-    public int MigliaiaCampione() throws IOException {
-        int mc = 0;
-        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
-        String rs = reader.readLine();
-        String[] splits = rs.split("\\.");
-        String pc = splits[3];
-        char m = pc.charAt(0);
-        mc = Character.getNumericValue(m);
-        return mc;
-    }
+    public void mouseDragged(MouseEvent mouseEvent) {}
 }

@@ -1,9 +1,5 @@
 package view;
 
-import controller.Main;
-
-import java.applet.AudioClip;
-
 public class View implements IView{
 
     private static View instance = null;
@@ -16,11 +12,9 @@ public class View implements IView{
     }
 
     public void closeStartWindow() {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                if (startWindow != null)
-                    startWindow.setVisible(false);
-            }
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            if (startWindow != null)
+                startWindow.setVisible(false);
         });
     }
 

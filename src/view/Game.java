@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public class Game extends JPanel implements MouseMotionListener,MouseListener,KeyListener,MouseWheelListener {
 
-    private static Game instance = null;
+    //private static final Game instance = null;
     private final JPanel contentPane;
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
@@ -25,13 +25,12 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
     int YCenter = (int) (height * 0.111 / 2);
 
     public int angle = 0;
-    public int Bullet_Type = 1;
 
     BufferedImage imgbackground,player1,player1_torretta1,player1_torretta2,player1_torretta3,
             player1_torretta4,bullet1, bullet2, bullet3, bullet4 , capsul1, capsul2, capsul3 ,
             capsul4, enemy,explosion;
 
-    HashMap<String,BufferedImage> imageMap = new HashMap<String, BufferedImage>();
+    HashMap<String,BufferedImage> imageMap = new HashMap<>();
 
     public Game(JPanel panel) {
 
@@ -48,7 +47,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
     public void loadImages() {
 
-        String[] strings = {"sfondo_gameplay", "Navicelladx", "Torretta_proiettile_1","Torretta_proiettile_2",
+        String[] strings = {"sfondo", "Navicelladx", "Torretta_proiettile_1","Torretta_proiettile_2",
                 "Torretta_proiettile_3","Torretta_proiettile_4","Proiettile_1","Proiettile_2","Proiettile_3",
                 "Proiettile_4","Ast_1","Ast_2","Ast_3","Ast_4","nemico_1","esplosione"};
 
@@ -75,7 +74,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         super.paintComponent(g);
 
-        g.drawImage(imageMap.get("sfondo_gameplay"), 0, 0, (int) (width), (int) height, null);
+        g.drawImage(imageMap.get("sfondo"), 0, 0, (int) (width), (int) height, null);
 
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -150,7 +149,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                     t.scale(width * 0.0001, height * 0.00018);
                     g2d.drawImage(imageMap.get("Proiettile_"+k), t, null);
                     break;
-                }else ;
+                }
             }
             switch (ControllerForView.getInstance().GameObject(i).getType()) {
                 case "explosion": {
@@ -187,11 +186,6 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
             ControllerForView.getInstance().createGameObject( ControllerForView.getInstance().spaceShipX()+(width*0.04/2),
                     ControllerForView.getInstance().spaceShipY()+(height*0.068/2), e.getX(),
                     e.getY(),"bullet"+ ControllerForView.getInstance().getMapElement("BulletType"));
-            AudioManager.getInstance().PlayShoot();
-        }
-        if(e.getButton() == MouseEvent.BUTTON2) {
-            ControllerForView.getInstance().setBooleanMapElement("shooting", true);
-            ControllerForView.getInstance().createGameObject( ControllerForView.getInstance().spaceShipX()+(width*0.04/2),  ControllerForView.getInstance().spaceShipY()+(height*0.068/2), e.getX(), e.getY(),"bullet");
             AudioManager.getInstance().PlayShoot();
         }
     }
@@ -312,28 +306,28 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         getActionMap().put("Bullet_1", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
-                Bullet_Type = 1;
+                ControllerForView.getInstance().setMapElement("BulletType", 1);
                 repaint();
             }
         });
 
         getActionMap().put("Bullet_2", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
-                Bullet_Type = 2;
+                ControllerForView.getInstance().setMapElement("BulletType", 2);
                 repaint();
             }
         });
 
         getActionMap().put("Bullet_3", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
-                Bullet_Type = 3;
+                ControllerForView.getInstance().setMapElement("BulletType", 3);
                 repaint();
             }
         });
 
         getActionMap().put("Bullet_4", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
-                Bullet_Type = 4;
+                ControllerForView.getInstance().setMapElement("BulletType", 4);
                 repaint();
             }
         });

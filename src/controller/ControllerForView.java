@@ -1,17 +1,20 @@
 package controller;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import model.GameObject;
 import view.AudioManager;
-import view.Game;
 import view.View;
 import model.Model;
 import java.awt.*;
+import java.io.*;
 import java.util.LinkedList;
 import java.util.Random;
 
 
 public class ControllerForView implements IControllerForView {
+
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    double width = screenSize.getWidth();
+    double height = screenSize.getHeight();
 
     private static ControllerForView instance = null;
 
@@ -126,7 +129,7 @@ public class ControllerForView implements IControllerForView {
         LinkedList<GameObject> block = new LinkedList<>();
 
         for(int i=0; i< n ; i++){
-            distancey += 50;
+            distancey += (width*0.03);
             distancex = 0;
             for(int j=0 ; j<m; j++){
                 matrix[i][j] = new Point((int)start.getX()+distancex, (int)start.getY()+distancey);
@@ -134,7 +137,7 @@ public class ControllerForView implements IControllerForView {
                     int casuale=rd.nextInt(type.length);
                     block.add(new GameObject(matrix[i][j].getX(), matrix[i][j].getY(),spaceShipX(),spaceShipY(), type[casuale]));
                 }
-                distancex +=50;
+                distancex +=(width*0.03);
             }
         }
 
@@ -154,16 +157,18 @@ public class ControllerForView implements IControllerForView {
             }
         }else{
             createGameObject(object.getX(),object.getY(),spaceShipX(),spaceShipY(), "enemy");
+            AudioManager.getInstance().PlaySummon();
+
         }
     }
 
     public void moveBlock(){
         for(int i=0; i<Model.getInstance().getblocklist().size(); i++){
             for(int j=0; j<Model.getInstance().getBlock(i).size(); j++){
-                Model.getInstance().setBlockElement(i,j,BlockElement(i,j).getX() + BlockElement(i,0).getDeltaX()*5,
-                        BlockElement(i,j).getY() + BlockElement(i,0).getDeltaY()*5
+                Model.getInstance().setBlockElement(i,j,BlockElement(i,j).getX() + BlockElement(i,0).getDeltaX()*(width*0.003),
+                        BlockElement(i,j).getY() + BlockElement(i,0).getDeltaY()*(width*0.003)
                 );
-                if(BlockElement(i,j).getX()<0 || BlockElement(i,j).getX()>1900 || BlockElement(i,j).getY()<0 || BlockElement(i,j).getY()>1300 ){
+                if(BlockElement(i,j).getX()<0 || BlockElement(i,j).getX()>(width*1.2) || BlockElement(i,j).getY()<0 || BlockElement(i,j).getY()>(height*1.2) ){
                     Model.getInstance().removeBlockElement(i,j);
                 }
             }
@@ -175,25 +180,25 @@ public class ControllerForView implements IControllerForView {
 
             String type = GameObject(i).getType();
 
-            if (GameObject(i).getX() < 0 || GameObject(i).getX() > 1900 || GameObject(i).getY() < 0 || GameObject(i).getY() > 1300) {
+            if (GameObject(i).getX() < -200 || GameObject(i).getX() > (width*1.2) || GameObject(i).getY() < -200 || GameObject(i).getY() > (height*1.2)) {
                 Model.getInstance().removeGameObject(i);
             } else
             if(type.equals("bullet1") || type.equals("bullet2") || type.equals("bullet3") || type.equals("bullet4")){
-                Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX()*20,
-                        GameObject(i).getY() + GameObject(i).getDeltaY()*20);
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX()*(width*0.015),
+                        GameObject(i).getY() + GameObject(i).getDeltaY()*(width*0.015));
             }else
-                if (GameObject(i).getType().equals("explosion")) {
-                    Model.getInstance().setGameObjects(i, GameObject(i).getScaleDX(),
-                            GameObject(i).getScaleSX() + 0.00005);
-                    if (GameObject(i).getScaleSX() > 0.0002) {
-                        Model.getInstance().removeGameObject(i);
-                    }
+            if (GameObject(i).getType().equals("explosion")) {
+                Model.getInstance().setGameObjects(i, GameObject(i).getScaleDX(),
+                        GameObject(i).getScaleSX() + (width*0.000000026));
+                if (GameObject(i).getScaleSX() > (width*0.000000104)) {
+                    Model.getInstance().removeGameObject(i);
+                }
 
-                } else
-                    if (GameObject(i).getType().equals("enemy")) {
-                        Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX() * 7,
-                                GameObject(i).getY() + GameObject(i).getDeltaY() * 7);
-                    }
+            } else
+            if (GameObject(i).getType().equals("enemy")) {
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX() * (width*0.006),
+                        GameObject(i).getY() + GameObject(i).getDeltaY() * (width*0.006));
+            }
         }
     }
 
@@ -211,11 +216,9 @@ public class ControllerForView implements IControllerForView {
             for(int h =0; h< GameObjectList().size(); h++) {
                 if (h != k && !GameObject(h).getType().equals("explosion") && !GameObject(k).getType().equals("explosion"))
                     if (checkCollision(Model.getInstance().getGameObjectRectangle(k), Model.getInstance().getGameObjectRectangle(h))) {
+                        Model.getInstance().removeGameObject(h);
                         Model.getInstance().removeGameObject(k);
-                        AudioManager.getInstance().PlayExploding();
-                        double explosionX = GameObject(k).getX();
-                        double explosionY = GameObject(k).getY();
-                        createGameObject(explosionX, explosionY, 0, 0, "explosion");
+                        AudioManager.getInstance().PlayScreamMonster();
                         break;
                     }
             }
@@ -244,7 +247,7 @@ public class ControllerForView implements IControllerForView {
                                 removeBlockElement(i, BlockElement(i, j), GameObject(k).getType());
                                 Model.getInstance().removeGameObject(k);
                                 increaseScore(3);
-                                break;
+                                break outerloop;
                             } else if(checkCollision(Model.getInstance().getGameObjectRectangle(k),SpaceShipRectangle()) && GameObject(k).getType().equals("enemy")){
                                 setBooleanMapElement("isRunning", false);
                                 AudioManager.getInstance().StopGameSong();
@@ -292,21 +295,30 @@ public class ControllerForView implements IControllerForView {
     }
 
     public void MoveSpaceShip(){
+        double speed = width*0.005;
         if(getBooleanMapElement("MoveUp")){
             if(!(Model.getInstance().getSpaceShipY() < 0))
-                Model.getInstance().setSpaceShip(spaceShipX(), (spaceShipY() -10));
+                Model.getInstance().setSpaceShip(spaceShipX(), (spaceShipY() -speed));
+            else
+                Model.getInstance().setSpaceShip(spaceShipX(), height);
         }
         if(getBooleanMapElement("MoveDown")){
-            if(!(Model.getInstance().getSpaceShipY() > 950))
-                Model.getInstance().setSpaceShip(spaceShipX(), (spaceShipY() +10));
+            if(!(Model.getInstance().getSpaceShipY() > height))
+                Model.getInstance().setSpaceShip(spaceShipX(), (spaceShipY() +speed));
+            else
+                Model.getInstance().setSpaceShip(spaceShipX(), 0);
         }
         if(getBooleanMapElement("MoveRight")){
-            if(!(Model.getInstance().getSpaceShipX() > 1800))
-                Model.getInstance().setSpaceShip(spaceShipX() +10, spaceShipY());
+            if(!(Model.getInstance().getSpaceShipX() > width))
+                Model.getInstance().setSpaceShip(spaceShipX() +speed, spaceShipY());
+            else
+                Model.getInstance().setSpaceShip(0, spaceShipY());
         }
         if(getBooleanMapElement("MoveLeft")){
-            if(!(Model.getInstance().getSpaceShipX() < 0 ))
-                Model.getInstance().setSpaceShip(spaceShipX() -10, spaceShipY());
+            if(!(Model.getInstance().getSpaceShipX() < 0))
+                Model.getInstance().setSpaceShip(spaceShipX() -speed, spaceShipY());
+            else
+                Model.getInstance().setSpaceShip(width, spaceShipY());
         }
 
     }
@@ -341,11 +353,39 @@ public class ControllerForView implements IControllerForView {
 
     }
 
+    public void Savepunteggio(int indice0, int indice1, int indice2, int unita, int decine, int centinaia, int migliaia) throws IOException {
+        File save = new File("champion.txt");
+        FileWriter fw = new FileWriter(save);
+        String s = indice0 + "." + indice1 + "." + indice2 + "." + migliaia + centinaia + decine + unita + ".";
+        fw.write(s);
+        fw.flush();
+        fw.close();
+    }
+
+    public int readChampion(String type, int i)  throws IOException{
+        int indice=0;
+        BufferedReader reader = new BufferedReader(new FileReader("champion.txt"));
+        String rs = reader.readLine();
+        String[] splits = rs.split("\\.");
+        if(type.equals("nickname")){
+            String ind = splits[i];
+            indice = Integer.parseInt(ind);
+        }
+        if(type.equals("champ")){
+            String pc = splits[3];
+            indice = Integer.parseInt(pc);
+        }
+        if(type.equals("Champ_score")){
+            String score = splits[3];
+            char c = score.charAt(i);
+            indice = Character.getNumericValue(c);
+        }
+        return indice;
+    }
+
     public static IControllerForView getInstance() {
         if (instance == null)
             instance = new ControllerForView();
         return instance;
     }
-
-
 }

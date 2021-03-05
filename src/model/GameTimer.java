@@ -5,7 +5,7 @@ public abstract class GameTimer {
     private int currentTicks;
     private int intervalTicks;
     private long loopCount;
-    private int resetTicks;
+    private final int resetTicks;
 
     public GameTimer( int interval ) {
         intervalTicks = interval;//frequenza del timer (ogni tot interval esegue action())

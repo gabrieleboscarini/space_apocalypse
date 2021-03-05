@@ -5,9 +5,9 @@ import java.util.LinkedList;
 
 public interface IModel {
 
-     public double getScreenWidth();
+     double getScreenWidth();
 
-     public double getScreenHeight();
+     double getScreenHeight();
 
      double getSpaceShipX();
 
@@ -83,30 +83,30 @@ public interface IModel {
 
      void setSpaceShip(double x, double y /*double destX, double destY*/);
 
-     public LinkedList<GameObject> getGameObjectList();
+     LinkedList<GameObject> getGameObjectList();
 
-     public LinkedList<LinkedList<GameObject>> getblocklist();
+     LinkedList<LinkedList<GameObject>> getblocklist();
 
-     public LinkedList<GameObject> getBlock(int i);
+     LinkedList<GameObject> getBlock(int i);
 
-     public void addBlock(LinkedList<GameObject> block);
+     void addBlock(LinkedList<GameObject> block);
 
-     public void setBlockElement(int i, int j, double x, double y);
+     void setBlockElement(int i, int j, double x, double y);
 
-     public GameObject getBlockElement(int i, int j);
+     GameObject getBlockElement(int i, int j);
 
-     public Rectangle getBlockElementRectangle(int i, int j);
+     Rectangle getBlockElementRectangle(int i, int j);
 
-     public void removeBlockElement(int i, int j);
+     void removeBlockElement(int i, int j);
 
-     public GameObject getGameObject(int i);
+     GameObject getGameObject(int i);
 
-     public void addGameObject(GameObject block);
+     void addGameObject(GameObject block);
 
-     public void removeGameObject(int i);
+     void removeGameObject(int i);
 
-     public void setGameObjects(int i, double x, double y);
+     void setGameObjects(int i, double x, double y);
 
-     public Rectangle getGameObjectRectangle(int i);
+     Rectangle getGameObjectRectangle(int i);
 
 }

@@ -1,8 +1,5 @@
 package view;
 
-import controller.ControllerForView;
-import controller.IControllerForView;
-
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -22,42 +19,47 @@ public class AudioManager {
     AudioInputStream audioInput1 = null;
     Clip clip1 = null;
 
-    String music2 ="utils/msc/Game_over.wav";
+    String music2 = "utils/msc/Game_over.wav";
     File musicPath2 = new File(music2);
     AudioInputStream audioInput2 = null;
     Clip clip2 = null;
 
-    String audio ="utils/msc/Shoot.wav";
+    String audio = "utils/msc/Shoot.wav";
     File audioPath = new File(audio);
     AudioInputStream aInput = null;
     Clip aud = null;
 
-    String audio1 ="utils/msc/Explosion_Sound_Effect.wav";
+    String audio1 = "utils/msc/Explosion_Sound_Effect.wav";
     File audioPath1 = new File(audio1);
     AudioInputStream aInput1 = null;
     Clip aud1 = null;
 
-    String audio2 ="utils/msc/Wilhelm_Scream_Sound_Effe.wav";
+    String audio2 = "utils/msc/Wilhelm_Scream_Sound_Effe.wav";
     File audioPath2 = new File(audio2);
     AudioInputStream aInput2 = null;
     Clip aud2 = null;
 
-    String audio3 ="utils/msc/Scream_Monster.wav";
+    String audio3 = "utils/msc/Scream_Monster.wav";
     File audioPath3 = new File(audio3);
     AudioInputStream aInput3 = null;
     Clip aud3 = null;
 
-    String audio4 ="utils/msc/Game_Over_Se.wav";
+    String audio4 = "utils/msc/Game_Over_Se.wav";
     File audioPath4 = new File(audio4);
     AudioInputStream aInput4 = null;
     Clip aud4 = null;
 
-    String audio5 ="utils/msc/cocomero.wav";
+    String audio5 = "utils/msc/cocomero.wav";
     File audioPath5 = new File(audio5);
     AudioInputStream aInput5 = null;
     Clip aud5 = null;
 
-    public void PlayMainMenuSong(){
+    String audio6 = "utils/msc/Summon.wav";
+    File audioPath6 = new File(audio6);
+    AudioInputStream aInput6 = null;
+    Clip aud6 = null;
+
+    public void PlayMainMenuSong() {
 
         try {
             audioInput = AudioSystem.getAudioInputStream(musicPath);
@@ -72,11 +74,11 @@ public class AudioManager {
 
     }
 
-    public void StopMainMenuSong(){
+    public void StopMainMenuSong() {
         clip.stop();
     }
 
-    public void PlayGameSong(){
+    public void PlayGameSong() {
 
         try {
             audioInput1 = AudioSystem.getAudioInputStream(musicPath1);
@@ -90,11 +92,11 @@ public class AudioManager {
         }
     }
 
-    public void StopGameSong(){
+    public void StopGameSong() {
         clip1.stop();
     }
 
-    public void PlayGameOverSong(){
+    public void PlayGameOverSong() {
 
         try {
             audioInput2 = AudioSystem.getAudioInputStream(musicPath2);
@@ -108,12 +110,12 @@ public class AudioManager {
         }
     }
 
-    public void StopGameOverSong(){
+    public void StopGameOverSong() {
         clip2.stop();
     }
 
 
-    public void PlayShoot(){
+    public void PlayShoot() {
 
         try {
             aInput = AudioSystem.getAudioInputStream(audioPath);
@@ -125,7 +127,7 @@ public class AudioManager {
         }
     }
 
-    public void PlayExploding(){
+    public void PlayExploding() {
 
         try {
             aInput1 = AudioSystem.getAudioInputStream(audioPath1);
@@ -137,7 +139,7 @@ public class AudioManager {
         }
     }
 
-    public void PlayScream(){
+    public void PlayScream() {
         try {
             aInput2 = AudioSystem.getAudioInputStream(audioPath2);
             aud2 = AudioSystem.getClip();
@@ -148,7 +150,7 @@ public class AudioManager {
         }
     }
 
-    public void PlayScreamMonster(){
+    public void PlayScreamMonster() {
         try {
             aInput3 = AudioSystem.getAudioInputStream(audioPath3);
             aud3 = AudioSystem.getClip();
@@ -159,7 +161,7 @@ public class AudioManager {
         }
     }
 
-    public void PlayGameOverSe(){
+    public void PlayGameOverSe() {
 
         try {
             aInput4 = AudioSystem.getAudioInputStream(audioPath4);
@@ -171,7 +173,7 @@ public class AudioManager {
         }
     }
 
-    public void PlayCocomero(){
+    public void PlayCocomero() {
 
         try {
             aInput5 = AudioSystem.getAudioInputStream(audioPath5);
@@ -183,8 +185,17 @@ public class AudioManager {
         }
     }
 
+    public void PlaySummon() {
 
-
+        try {
+            aInput6 = AudioSystem.getAudioInputStream(audioPath6);
+            aud6 = AudioSystem.getClip();
+            aud6.open(aInput6);
+            aud6.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
     public static AudioManager getInstance() {
         if (instance == null)

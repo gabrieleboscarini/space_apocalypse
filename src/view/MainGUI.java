@@ -2,23 +2,14 @@ package view;
 
 import controller.ControllerForView;
 import model.GameTimer;
-import model.Model;
 
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.AffineTransform;
 
 public class MainGUI extends JFrame {
 
-    private JPanel contentPane;
-    private MainMenu mainmenu;
-    private Tutorial tutorial;
-    private Game game;
-    private Pause pause;
-    private Game_Over gameover;
+    private final JPanel contentPane;
+    private final Game game;
 
     private final GameLoop gameloop;
     private GameTimer timer;
@@ -45,11 +36,11 @@ public class MainGUI extends JFrame {
 
         contentPane.setLayout(new CardLayout());
 
-        mainmenu = new MainMenu(contentPane);
-        tutorial = new Tutorial(contentPane);
+        MainMenu mainmenu = new MainMenu(contentPane);
+        Tutorial tutorial = new Tutorial(contentPane);
         game = new Game(contentPane);
-        pause = new Pause(contentPane);
-        gameover = new Game_Over(contentPane);
+        Pause pause = new Pause(contentPane);
+        Game_Over gameover = new Game_Over(contentPane);
 
 
         contentPane.add(mainmenu, "mainmenu");
@@ -96,7 +87,6 @@ public class MainGUI extends JFrame {
             timer.resetGame();
             timer2.resetGame();
             timer3.resetGame();
-            ControllerForView.getInstance().clearGame();
             ControllerForView.getInstance().setBooleanMapElement("resetGame", false);
         }
     }

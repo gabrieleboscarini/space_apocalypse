@@ -1,8 +1,5 @@
 package model;
 
-
-import controller.ControllerForView;
-
 import java.awt.*;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,14 +16,14 @@ public class Model implements IModel {
     GameObject spaceShip, TempObject, TempBlockElement;
     LinkedList<GameObject> TempBlock;
 
-   private LinkedList<GameObject> gameObjects = new LinkedList<GameObject>();
-    private LinkedList<LinkedList<GameObject>> blockList = new LinkedList<LinkedList<GameObject>>();
+    private final LinkedList<GameObject> gameObjects = new LinkedList<>();
+    private final LinkedList<LinkedList<GameObject>> blockList = new LinkedList<>();
 
     private boolean isRunning, shooting, isExploding,resetGame, gameover,MoveUp,MoveDown,MoveRight,MoveLeft,Move,freccia_su,freccia_giu;
     private int BulletType, score,unita,decine,centinaia,migliaia,index1,avanzamento;
 
-    private HashMap<String ,Integer> indexmap = new HashMap<>();
-    private HashMap<String,Boolean> booleanMap =  new HashMap<>();
+    private final HashMap<String ,Integer> indexmap = new HashMap<>();
+    private final HashMap<String,Boolean> booleanMap =  new HashMap<>();
 
     public Model(){
         this.initGame();

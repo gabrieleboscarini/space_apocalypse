@@ -14,13 +14,10 @@ import java.io.IOException;
 
 public class Pause extends JPanel implements MouseInputListener {
 
-    private JPanel contentPane;
-    private Rectangle2D.Double continuegame;
-    private Rectangle2D.Double menu;
-    private Rectangle2D.Double exit;
+    private final JPanel contentPane;
+    private final Rectangle2D.Double continuegame, menu, exit;
 
     boolean gamecontinue = false;
-    boolean pmm = true;
 
     BufferedImage imgbackground = null;
     BufferedImage imgpause = null;
@@ -159,11 +156,9 @@ public class Pause extends JPanel implements MouseInputListener {
     public void mouseClicked(MouseEvent e){
         if(this.continuegame.contains(e.getX(), e.getY()))	{
             this.gamecontinue = true;
-            if(this.gamecontinue){
-                CardLayout cardLayout = (CardLayout) contentPane.getLayout();
-                cardLayout.show(contentPane, "game");
-                ControllerForView.getInstance().setBooleanMapElement("isRunning", true);
-            }
+            CardLayout cardLayout = (CardLayout) contentPane.getLayout();
+            cardLayout.show(contentPane, "game");
+            ControllerForView.getInstance().setBooleanMapElement("isRunning", true);
         }
         if(this.menu.contains(e.getX(), e.getY())){
             CardLayout cardLayout = (CardLayout) contentPane.getLayout();
@@ -171,6 +166,7 @@ public class Pause extends JPanel implements MouseInputListener {
             AudioManager.getInstance().PlayMainMenuSong();
             AudioManager.getInstance().StopGameSong();
             ControllerForView.getInstance().setBooleanMapElement("resetGame",true);
+            ControllerForView.getInstance().clearGame();
             ControllerForView.getInstance().clearGameOver();
         }
         if(this.exit.contains(e.getX(), e.getY()))
@@ -198,30 +194,10 @@ public class Pause extends JPanel implements MouseInputListener {
     }
 
     public void mouseMoved(MouseEvent e){
-        if(this.continuegame.contains(e.getX(), e.getY())) {
-            fbcontinue = true;
-            this.repaint();
-        }
-        else {
-            fbcontinue = false;
-            this.repaint();
-        }
-        if(this.menu.contains(e.getX(), e.getY())){
-            fbmenu = true;
-            this.repaint();
-        }
-        else{
-            fbmenu = false;
-            this.repaint();
-        }
-        if(this.exit.contains(e.getX(), e.getY())) {
-            fbexit = true;
-            this.repaint();
-        }
-        else{
-            fbexit = false;
-            this.repaint();
-        }
+        fbcontinue = this.continuegame.contains(e.getX(), e.getY());
+        fbmenu = this.menu.contains(e.getX(), e.getY());
+        fbexit = this.exit.contains(e.getX(), e.getY());
+        this.repaint();
     }
 
 }

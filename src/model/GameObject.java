@@ -1,10 +1,6 @@
 package model;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 import static java.lang.Math.sqrt;
 
@@ -19,7 +15,7 @@ public class GameObject{
     private double scaleDX;
     private double dX;
     private double dY;
-    private String type;
+    private final String type;
 
 
     public GameObject(double currentX, double currentY, double destinationX, double destinationY, String type){
@@ -89,8 +85,7 @@ public class GameObject{
     }
 
     public Rectangle ObjectRectangle(int x, int y, int width, int weight){
-        Rectangle r = new Rectangle(x, y, width, weight);
-        return r;
+        return new Rectangle(x, y, width, weight);
     }
 
 }

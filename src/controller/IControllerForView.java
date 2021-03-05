@@ -3,43 +3,44 @@ package controller;
 import model.GameObject;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.LinkedList;
 
 public interface IControllerForView {
 
     void openStartWindow();
 
-    void closeStartWindow();
+    //void closeStartWindow();
 
     double spaceShipX();
 
     double spaceShipY();
 
-    public Rectangle SpaceShipRectangle();
+    Rectangle SpaceShipRectangle();
 
     void ruotaSpaceShip(double x, double y);
 
     double Angle();
 
-    public LinkedList<GameObject> GameObjectList();
+    LinkedList<GameObject> GameObjectList();
 
     void createBlockElement();
 
-    public void removeBlockElement(int i,GameObject object,String btype);
+    void removeBlockElement(int i, GameObject object, String btype);
 
-    public void collisionDetection0();
+    void collisionDetection0();
 
-    public void collisionDetection1();
+    void collisionDetection1();
 
-    public void collision();
+    void collision();
 
-    public void clearGame();
+    void clearGame();
 
-    public void clearGameOver();
+    void clearGameOver();
 
     void increaseScore(int i);
 
-    public int getMapElement(String key);
+    int getMapElement(String key);
 
     boolean getBooleanMapElement(String key);
 
@@ -53,16 +54,20 @@ public interface IControllerForView {
 
     void moveArrowDown();
 
-    public void moveBlock();
+    void moveBlock();
 
-    public Rectangle BlockElementRectangle(int i, int j);
+    Rectangle BlockElementRectangle(int i, int j);
 
-    public GameObject GameObject(int i);
+    GameObject GameObject(int i);
 
-    public GameObject BlockElement(int i, int j);
+    GameObject BlockElement(int i, int j);
 
-    public void createGameObject(double x, double y, double dx, double dy, String type);
+    void createGameObject(double x, double y, double dx, double dy, String type);
 
-    public void moveGameObject();
+    void moveGameObject();
+
+    public void Savepunteggio(int indice0, int indice1, int indice2, int unita, int decine, int centinaia, int migliaia) throws IOException;
+
+    public int readChampion(String type, int i)  throws IOException;
 
 }

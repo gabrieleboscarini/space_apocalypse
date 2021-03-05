@@ -1,11 +1,7 @@
 package view;
 
-import controller.ControllerForView;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -17,10 +13,9 @@ import java.io.IOException;
 
 public class MainMenu extends JPanel implements MouseInputListener{
 
-    private JPanel contentPane;
+    private final JPanel contentPane;
 
-    private Rectangle2D.Double start;
-    private Rectangle2D.Double exit;
+    private final Rectangle2D.Double start, exit;
 
     BufferedImage img = null;
     BufferedImage imgstart = null;
@@ -148,23 +143,9 @@ public class MainMenu extends JPanel implements MouseInputListener{
     }
 
     public void mouseMoved(MouseEvent e){
-        if(this.start.contains(e.getX(), e.getY())) {
-            fbstart = true;
-            this.repaint();
-        }
-        else{
-            fbstart = false;
-            this.repaint();
-        }
-
-        if(this.exit.contains(e.getX(), e.getY())) {
-            fbexit = true;
-            this.repaint();
-        }
-        else{
-            fbexit = false;
-            this.repaint();
-        }
+        fbstart = this.start.contains(e.getX(), e.getY());
+        fbexit = this.exit.contains(e.getX(), e.getY());
+        this.repaint();
 
 
     }
@@ -172,7 +153,6 @@ public class MainMenu extends JPanel implements MouseInputListener{
     private void handleNewGameEvent() {
         CardLayout cardLayout = (CardLayout) contentPane.getLayout();
         cardLayout.show(contentPane, "tutorial");
-        //cardLayout.show(contentPane, "game");
         AudioManager.getInstance().StopMainMenuSong();
         AudioManager.getInstance().PlayGameSong();
     }
