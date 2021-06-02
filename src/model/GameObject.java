@@ -16,9 +16,11 @@ public class GameObject{
     private double dX;
     private double dY;
     private final String type;
+    private final String color;
+    private int TimeToLive;
 
 
-    public GameObject(double currentX, double currentY, double destinationX, double destinationY, String type){
+    public GameObject(double currentX, double currentY, double destinationX, double destinationY, String type, String color, int TTL){
 
         this.x = currentX;
         this.y = currentY;
@@ -30,6 +32,8 @@ public class GameObject{
         deltaX /= mag;
         deltaY/= mag;
         this.type = type;
+        this.color = color;
+        this.TimeToLive = TTL;
     }
 
     public double getX() {
@@ -48,13 +52,9 @@ public class GameObject{
         this.y = y;
     }
 
-    public void setDestinationX(double x){
-        this.dX = x;
-    }
+    public double getDestinationX(){ return dX;}
 
-    public void setDestinationY(double y){
-        this.dY = y;
-    }
+    public double getDestinationY(){return dY; }
 
     public double getDeltaX(){
         return deltaX;
@@ -84,8 +84,16 @@ public class GameObject{
         return type;
     }
 
+    public String getColor(){return color;}
+
     public Rectangle ObjectRectangle(int x, int y, int width, int weight){
         return new Rectangle(x, y, width, weight);
+    }
+
+    public int getTTL(){return TimeToLive;}
+
+    public void setTTL(int ttl){
+        this.TimeToLive = ttl;
     }
 
 }

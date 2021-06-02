@@ -2,6 +2,7 @@ package view;
 
 import controller.ControllerForView;
 
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -16,17 +17,13 @@ import java.util.LinkedList;
 
 public class Game_Over extends JPanel implements MouseInputListener {
 
-    private final JPanel contentPane;
+    private static JPanel contentPane;
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
     double height = screenSize.getHeight();
 
-    BufferedImage freccia_su;
-    BufferedImage freccia_giu;
-    BufferedImage freccia_su_fb;
-    BufferedImage freccia_giu_fb;
-    BufferedImage underscore;
+    BufferedImage freccia_su,freccia_giu,freccia_su_fb,freccia_giu_fb,underscore;
     BufferedImage _0, _1, _2, _3, _4, _5, _6, _7, _8, _9;
     BufferedImage a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
     BufferedImage img, nemici, navicella, imgmenu, imgexit, imgfbmenu, imgfbexit, S_Y_N, freccia, nickname, score, champion;
@@ -38,8 +35,6 @@ public class Game_Over extends JPanel implements MouseInputListener {
     private boolean fbfrecciagiu;
     private boolean fbmenu;
     private boolean fbexit;
-
-    // private int avanzamento = ControllerForView.getInstance().getMapElement("avanzamento");
     private int indice1 = 0;
     private int indice2 = 0;
     private int indice3 = 0;
@@ -108,6 +103,11 @@ public class Game_Over extends JPanel implements MouseInputListener {
                 ioe.printStackTrace();
             }
         }
+    }
+
+    public int getGameOverIndex(int i){
+        int[] index = {indice1,indice2,indice3};
+        return index[i];
     }
 
     @Override
@@ -189,16 +189,6 @@ public class Game_Over extends JPanel implements MouseInputListener {
             drawScore(g2d, (int) (width * 0.63), (int) (height * 0.5), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().getMapElement("centinaia"));
             drawScore(g2d, (int) (width * 0.68), (int) (height * 0.5), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().getMapElement("decine"));
             drawScore(g2d, (int) (width * 0.73), (int) (height * 0.5), (int) (width * 0.045), (int) (height * 0.08), ControllerForView.getInstance().getMapElement("unita"));
-
-            int puntcor = ControllerForView.getInstance().getMapElement("score");
-            try {
-                if (puntcor > ControllerForView.getInstance().readChampion("champ", 0))
-                    ControllerForView.getInstance().Savepunteggio(indice1, indice2, indice3,ControllerForView.getInstance().getMapElement("unita"),
-                            ControllerForView.getInstance().getMapElement("decine") , ControllerForView.getInstance().getMapElement("centinaia"),
-                            ControllerForView.getInstance().getMapElement("migliaia"));
-            } catch (IOException ioException) {
-                ioException.printStackTrace();
-            }
 
             //nickname and score of the champion
             try {
@@ -293,18 +283,42 @@ public class Game_Over extends JPanel implements MouseInputListener {
 
     public void KeyBoardActions() {
         setInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, getInputMap());
-        KeyStroke key2 = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        KeyStroke key0 = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+        KeyStroke key1 = KeyStroke.getKeyStroke(KeyEvent.VK_D, 0);
+        KeyStroke key2 = KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0);
         KeyStroke key3 = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
-        KeyStroke key5 = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key2, "pressedEnter");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key3, "pressedUp");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key5, "releaseUp");
+        KeyStroke key4 = KeyStroke.getKeyStroke(KeyEvent.VK_W, 0);
+        KeyStroke key5 = KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0);
+        KeyStroke key6 = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+        KeyStroke key7 = KeyStroke.getKeyStroke(KeyEvent.VK_S, 0);
+        KeyStroke key8 = KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0);
+        KeyStroke key9 = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        KeyStroke key10 = KeyStroke.getKeyStroke(KeyEvent.VK_A, 0);
+        KeyStroke key11 = KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0);
 
-        getActionMap().put("pressedEnter", new AbstractAction() {
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key0, "pressedGo");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key1, "pressedGo");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key2, "pressedGo");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key3, "pressedUp");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key4, "pressedUp");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key5, "pressedUp");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key6, "pressedDown");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key7, "pressedDown");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key8, "pressedDown");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key9, "pressedBack");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key10, "pressedBack");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key11, "pressedBack");
+
+
+        getActionMap().put("pressedGo", new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
                 int avanzamento = ControllerForView.getInstance().getMapElement("avanzamento") + 1;
-                if (ControllerForView.getInstance().getMapElement("avanzamento") < 3)
+                if (ControllerForView.getInstance().getMapElement("avanzamento") < 3) {
                     ControllerForView.getInstance().setMapElement("avanzamento", avanzamento);
+                }
+                if(ControllerForView.getInstance().getMapElement("avanzamento") == 3){
+                    ControllerForView.getInstance().updateChampion(indice1, indice2,indice3);
+                }
                 ControllerForView.getInstance().setBooleanMapElement("freccia_su", false);
                 ControllerForView.getInstance().setBooleanMapElement("freccia_giu", false);
                 ControllerForView.getInstance().setMapElement("index1", 0);
@@ -321,12 +335,25 @@ public class Game_Over extends JPanel implements MouseInputListener {
             }
         });
 
-        getActionMap().put("releaseUp", new AbstractAction() {
+        getActionMap().put("pressedDown", new AbstractAction() {
             public void actionPerformed(ActionEvent arg0) {
                 moveArrowDown();
                 ControllerForView.getInstance().setBooleanMapElement("freccia_su", false);
                 ControllerForView.getInstance().setBooleanMapElement("freccia_giu", true);
                 repaint();
+            }
+        });
+
+        getActionMap().put("pressedBack", new AbstractAction() {
+            public void actionPerformed(ActionEvent arg0) {
+                if (ControllerForView.getInstance().getMapElement("avanzamento") > 0 && ControllerForView.getInstance().getMapElement("avanzamento") < 3) {
+                    int avanzamento = ControllerForView.getInstance().getMapElement("avanzamento")  - 1;
+                    ControllerForView.getInstance().setMapElement("avanzamento", avanzamento);
+                    ControllerForView.getInstance().setBooleanMapElement("freccia_su", false);
+                    ControllerForView.getInstance().setBooleanMapElement("freccia_giu", false);
+                    ControllerForView.getInstance().setMapElement("index1", 0);
+                    repaint();
+                }
             }
         });
     }
@@ -364,6 +391,7 @@ public class Game_Over extends JPanel implements MouseInputListener {
         }
 
         if (ControllerForView.getInstance().getMapElement("avanzamento") == 3) {
+
             if (this.menu.contains(e.getX(), e.getY())) {
                 CardLayout cardLayout = (CardLayout) contentPane.getLayout();
                 cardLayout.show(contentPane, "mainmenu");

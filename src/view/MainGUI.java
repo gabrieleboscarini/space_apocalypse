@@ -1,10 +1,14 @@
 package view;
 
 import controller.ControllerForView;
+import model.GameLoop;
+import model.GameObject;
 import model.GameTimer;
+import model.Model;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 public class MainGUI extends JFrame {
 
@@ -19,6 +23,7 @@ public class MainGUI extends JFrame {
 
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     double width = screenSize.getWidth();
+    double height = screenSize.getHeight();
 
     JLabel score = new JLabel("Score: 0");
 
@@ -75,7 +80,8 @@ public class MainGUI extends JFrame {
             timer.tick(3);
             timer2.tick(3);
             timer3.tick(100);
-            score.setText("Score: " + ControllerForView.getInstance().getMapElement("score"));
+            score.setText("Size gameObjectList: " + ControllerForView.getInstance().GameObjectList().size() + "Size BlockList: " + Model.getInstance().getblocklist().size() + "    " +
+                    "   Score: " + ControllerForView.getInstance().getMapElement("score"));
 
 
             if (ControllerForView.getInstance().getBooleanMapElement("Move")) {
@@ -100,23 +106,24 @@ public class MainGUI extends JFrame {
         timer = new GameTimer(70) {
             @Override
             public void action() {
-                // ControllerForView.getInstance().createEnemy(1);
                 ControllerForView.getInstance().createBlockElement();
-
             }
         };
 
         timer2 = new GameTimer(300) {
             @Override
             public void action() {
-                //ControllerForView.getInstance().createEnemy(2);
+
+                double x = ControllerForView.getInstance().casualSpawn().getX();
+                double y = ControllerForView.getInstance().casualSpawn().getY();
+                ControllerForView.getInstance().createGameObject(x,y , (Math.random() * (width +1)), (Math.random() * (height +1)), "enemy2",null,0);
             }
         };
 
-        timer3 = new GameTimer(100) {
+        timer3 = new GameTimer(200) {
             @Override
             public void action() {
-                // ControllerForView.getInstance().enemyFire();
+                ControllerForView.getInstance().enemyFire();
             }
         };
     }

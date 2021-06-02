@@ -1,7 +1,6 @@
 package view;
 
 import controller.ControllerForView;
-import model.Model;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -24,11 +23,11 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
     int XCenter = (int) (width * 0.0625 / 2);
     int YCenter = (int) (height * 0.111 / 2);
 
-    public int angle = 0;
+    public int orientation = 0;
 
     BufferedImage imgbackground,player1,player1_torretta1,player1_torretta2,player1_torretta3,
             player1_torretta4,bullet1, bullet2, bullet3, bullet4 , capsul1, capsul2, capsul3 ,
-            capsul4, enemy,explosion;
+            capsul4, enemy,broke1,broke2,broke3,broke4,enemybroken,enemy2,enemybroken2,enemy2bullet;
 
     HashMap<String,BufferedImage> imageMap = new HashMap<>();
 
@@ -47,12 +46,14 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
     public void loadImages() {
 
-        String[] strings = {"sfondo", "Navicelladx", "Torretta_proiettile_1","Torretta_proiettile_2",
-                "Torretta_proiettile_3","Torretta_proiettile_4","Proiettile_1","Proiettile_2","Proiettile_3",
-                "Proiettile_4","Ast_1","Ast_2","Ast_3","Ast_4","nemico_1","esplosione"};
+        String[] strings = {"sfondo", "Navicelladx", "Torretta_proiettile_0","Torretta_proiettile_1",
+                "Torretta_proiettile_2","Torretta_proiettile_3","Proiettile_orange","Proiettile_blue","Proiettile_pink",
+                "Proiettile_green","Ast_1","Ast_2","Ast_3","Ast_4","nemico_1","Ast_orange_Rotto","Ast_blue_Rotto",
+                "Ast_pink_Rotto","Ast_green_Rotto" , "nemico_1_morto", "nemico_2", "nemico_2_morto", "nemico_2_bullet"};
 
         BufferedImage[] images = {imgbackground, player1,player1_torretta1,player1_torretta2,player1_torretta3,
-                player1_torretta4,bullet1,bullet2,bullet3,bullet4,capsul1,capsul2,capsul3,capsul4,enemy,explosion};
+                player1_torretta4,bullet1,bullet2,bullet3,bullet4,capsul1,capsul2,capsul3,capsul4,enemy,
+                broke1,broke2,broke3,broke4,enemybroken,enemy2,enemybroken2,enemy2bullet};
 
         for (int i = 0; i < images.length; i++) {
             try {
@@ -81,7 +82,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         drawSpaceShip(g2d);
         drawSpaceShipTorretta(g2d);
-        drawBlockElement(g2d);
+        drawAsteroid(g2d);
         drawGameObject(g2d);
     }
 
@@ -89,7 +90,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
 
         AffineTransform oldAT = g2d.getTransform();
         g2d.translate(XCenter+ ControllerForView.getInstance().spaceShipX(), YCenter+ ControllerForView.getInstance().spaceShipY());
-        g2d.rotate(Math.toRadians(angle));
+        g2d.rotate(Math.toRadians(orientation));
         g2d.translate(-XCenter,-YCenter);
         g2d.drawImage(imageMap.get("Navicelladx"),0,0,XCenter*2, YCenter*2,null);
         g2d.setTransform(oldAT);
@@ -102,7 +103,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         g2d.rotate(ControllerForView.getInstance().Angle());
         g2d.translate(-XCenter,-YCenter);
 
-        for(int i=1; i<5; i++){
+        for(int i=0; i<4; i++){
             if(ControllerForView.getInstance().getMapElement("BulletType") == i){
                 g2d.drawImage(imageMap.get("Torretta_proiettile_" +i), 0, 0, XCenter * 2, YCenter * 2, null);
             }
@@ -110,60 +111,96 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         g2d.setTransform(oldAT);
     }
 
-    public void drawBlockElement(Graphics2D g2d){
-        for(int i=0; i<Model.getInstance().getblocklist().size(); i++){
-            for(int j=0; j<Model.getInstance().getBlock(i).size(); j++){
+    public void drawAsteroid(Graphics2D g2d){
+        for(int i=0; i<ControllerForView.getInstance().BlockList().size(); i++){
+            for(int j=0; j<ControllerForView.getInstance().Block(i).size(); j++){
 
                 AffineTransform t2 = new AffineTransform();
-                t2.translate(Model.getInstance().getBlockElement(i,j).getX(), Model.getInstance().getBlockElement(i,j).getY());
+                t2.translate(ControllerForView.getInstance().BlockElement(i,j).getX(), ControllerForView.getInstance().BlockElement(i,j).getY());
                 t2.scale(width*0.000345, height*0.00062);
 
-                switch (Model.getInstance().getBlockElement(i, j).getType()) {
-                    case "capsul1":
-                        g2d.drawImage(imageMap.get("Ast_1"), t2, null);
-                        break;
-                    case "capsul2":
-                        g2d.drawImage(imageMap.get("Ast_2"), t2, null);
-                        break;
-                    case "capsul3":
-                        g2d.drawImage(imageMap.get("Ast_3"), t2, null);
-                        break;
-                    case "capsul4":
-                        g2d.drawImage(imageMap.get("Ast_4"), t2, null);
-                        break;
-                }
+                if(ControllerForView.getInstance().BlockElement(i, j).getType().equals("asteroid"))
+
+                    switch (ControllerForView.getInstance().BlockElement(i, j).getColor()) {
+                        case "orange":
+                            g2d.drawImage(imageMap.get("Ast_1"), t2, null);
+                            break;
+                        case "blue":
+                            g2d.drawImage(imageMap.get("Ast_2"), t2, null);
+                            break;
+                        case "pink":
+                            g2d.drawImage(imageMap.get("Ast_3"), t2, null);
+                            break;
+                        case "green":
+                            g2d.drawImage(imageMap.get("Ast_4"), t2, null);
+                            break;
+                    }
             }
-
         }
-
     }
 
     public void drawGameObject(Graphics2D g2d){
 
+        String[] color = {"orange","blue","pink","green"};
+
         for(int i=0; i<ControllerForView.getInstance().GameObjectList().size(); i++){
 
-            for(int k=1; k<5; k++){
-                if(ControllerForView.getInstance().GameObject(i).getType().equals("bullet"+k)){
-                    AffineTransform t = new AffineTransform();
-                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
-                    t.scale(width * 0.0001, height * 0.00018);
-                    g2d.drawImage(imageMap.get("Proiettile_"+k), t, null);
-                    break;
+            if(ControllerForView.getInstance().GameObject(i).getType().equals("bullet") ||
+                    ControllerForView.getInstance().GameObject(i).getType().equals("broken")) {
+
+                for (String s : color) {
+                    if (ControllerForView.getInstance().GameObject(i).getType().equals("bullet") &&
+                            ControllerForView.getInstance().GameObject(i).getColor().equals(s)) {
+                        AffineTransform t = new AffineTransform();
+                        t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                        t.scale(width * 0.0001, height * 0.00018);
+                        g2d.drawImage(imageMap.get("Proiettile_" + s), t, null);
+                        break;
+                    }else
+                    if (ControllerForView.getInstance().GameObject(i).getType().equals("broken") &&
+                            ControllerForView.getInstance().GameObject(i).getColor().equals(s)) {
+                        AffineTransform t = new AffineTransform();
+                        t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                        t.scale(width * 0.000345, height * 0.00062);
+                        g2d.drawImage(imageMap.get("Ast_" + s + "_Rotto"), t, null);
+                        break;
+                    }
                 }
-            }
+            }else
             switch (ControllerForView.getInstance().GameObject(i).getType()) {
-                case "explosion": {
-                    AffineTransform t = new AffineTransform();
-                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
-                    t.scale(width * ControllerForView.getInstance().GameObject(i).getScaleSX(), height * ControllerForView.getInstance().GameObject(i).getScaleDX());
-                    g2d.drawImage(imageMap.get("esplosione"), t, null);
-                    break;
-                }
                 case "enemy": {
                     AffineTransform t = new AffineTransform();
                     t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
                     t.scale(width * 0.00015, height * 0.0003);
                     g2d.drawImage(imageMap.get("nemico_1"), t, null);
+                    break;
+                }
+                case "enemy_broken" : {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.00015, height * 0.0003);
+                    g2d.drawImage(imageMap.get("nemico_1_morto"), t, null);
+                    break;
+                }
+                case "enemy_2_broken" : {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.00015, height * 0.0003);
+                    g2d.drawImage(imageMap.get("nemico_2_morto"), t, null);
+                    break;
+                }
+                case "enemy2" : {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.00015, height * 0.0003);
+                    g2d.drawImage(imageMap.get("nemico_2"), t, null);
+                    break;
+                }
+                case "enemy_2_bullet" : {
+                    AffineTransform t = new AffineTransform();
+                    t.translate(ControllerForView.getInstance().GameObject(i).getX(), ControllerForView.getInstance().GameObject(i).getY());
+                    t.scale(width * 0.00026, height * 0.00046);
+                    g2d.drawImage(imageMap.get("nemico_2_bullet"), t, null);
                     break;
                 }
             }
@@ -173,7 +210,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
     @Override
     public void mouseMoved(MouseEvent e) {
 
-        double dx = e.getX() - ControllerForView.getInstance().spaceShipX()-(width*0.0625 /2);
+        double dx = e.getX() - ControllerForView.getInstance().spaceShipX()-(width*0.0625 /2); //coordinate del mouse
         double dy = e.getY() - ControllerForView.getInstance().spaceShipY()-(height*0.111 /2);
         ControllerForView.getInstance().ruotaSpaceShip(dx, dy);
     }
@@ -181,11 +218,14 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
     @Override
     public void mousePressed(MouseEvent e) {
 
+        String[] color = {"orange","blue","pink","green"};
+        int index = ControllerForView.getInstance().getMapElement("BulletType");
+
         if(e.getButton() == MouseEvent.BUTTON1) {
             ControllerForView.getInstance().setBooleanMapElement("shooting", true);
             ControllerForView.getInstance().createGameObject( ControllerForView.getInstance().spaceShipX()+(width*0.04/2),
                     ControllerForView.getInstance().spaceShipY()+(height*0.068/2), e.getX(),
-                    e.getY(),"bullet"+ ControllerForView.getInstance().getMapElement("BulletType"));
+                    e.getY(),"bullet", color[index],0);
             AudioManager.getInstance().PlayShoot();
         }
     }
@@ -195,19 +235,19 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         int bulletType = ControllerForView.getInstance().getMapElement("BulletType");
 
         if(e.getWheelRotation() < 0) {
-            if (bulletType < 4) {
+            if (bulletType < 3) {
                 bulletType++;
                 ControllerForView.getInstance().setMapElement("BulletType", bulletType);
             }else{
-                ControllerForView.getInstance().setMapElement("BulletType", 1);
+                ControllerForView.getInstance().setMapElement("BulletType", 0);
             }
         }
         else if(e.getWheelRotation() > 0){
-            if (bulletType > 1) {
+            if (bulletType > 0) {
                 bulletType--;
                 ControllerForView.getInstance().setMapElement("BulletType", bulletType);
             }else{
-                ControllerForView.getInstance().setMapElement("BulletType", 4);
+                ControllerForView.getInstance().setMapElement("BulletType", 3);
             }
         }
 
@@ -242,10 +282,10 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key3, "pressedD");
         getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key4, "pressedS");
 
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key5, "Bullet_1");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key6, "Bullet_2");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key7, "Bullet_3");
-        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key8, "Bullet_4");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key5, "Bullet_0");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key6, "Bullet_1");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key7, "Bullet_2");
+        getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(key8, "Bullet_3");
 
         getActionMap().put("pressedesc", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
@@ -263,7 +303,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
-                angle = 270;
+                orientation = 270;
                 repaint();
             }
         });
@@ -275,7 +315,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
-                angle = 180;
+                orientation = 180;
                 repaint();
             }
         });
@@ -287,7 +327,7 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveDown",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
-                angle = 0;
+                orientation = 0;
                 repaint();
             }
         });
@@ -299,7 +339,14 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
                 ControllerForView.getInstance().setBooleanMapElement("MoveRight",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveLeft",false);
                 ControllerForView.getInstance().setBooleanMapElement("MoveUp",false);
-                angle = 90;
+                orientation = 90;
+                repaint();
+            }
+        });
+
+        getActionMap().put("Bullet_0", new AbstractAction(){
+            public void actionPerformed(ActionEvent arg0) {
+                ControllerForView.getInstance().setMapElement("BulletType", 0);
                 repaint();
             }
         });
@@ -321,13 +368,6 @@ public class Game extends JPanel implements MouseMotionListener,MouseListener,Ke
         getActionMap().put("Bullet_3", new AbstractAction(){
             public void actionPerformed(ActionEvent arg0) {
                 ControllerForView.getInstance().setMapElement("BulletType", 3);
-                repaint();
-            }
-        });
-
-        getActionMap().put("Bullet_4", new AbstractAction(){
-            public void actionPerformed(ActionEvent arg0) {
-                ControllerForView.getInstance().setMapElement("BulletType", 4);
                 repaint();
             }
         });

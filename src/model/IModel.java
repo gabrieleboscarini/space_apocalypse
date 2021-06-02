@@ -19,54 +19,6 @@ public interface IModel {
 
      double getAngle();
 
- /*    void setBullet(int i, double x, double y);
-
-     double getBulletDeltaX(int i);
-
-     double getBulletDeltaY(int i);
-
-     void addBullet(GameObject block);
-
-     void removeBullet(int i);
-
-     double getBulletX(int i);
-
-     double getBulletY(int i);
-
-     int getbSize();
-
-     int geteSize();
-
-     int gete2Size();
-
-     double getEnemyX(int i);
-
-     double getEnemyY(int i);
-
-     double getEnemyDeltaX(int i);
-
-     double getEnemyDeltaY(int i);
-
-     void addEnemy(GameObject block);
-
-     void removeEnemy(int i);
-
-     void setEnemy2(int i, double x, double y);
-
-     double getEnemy2X(int i);
-
-     double getEnemy2Y(int i);
-
-     double getEnemy2DeltaX(int i);
-
-     double getEnemy2DeltaY(int i);
-
-     void addEnemy2(GameObject block);
-
-     void removeEnemy2(int i);
-
-     void setEnemy(int i, double x, double y); */
-
      void initGame();
 
      void clearGame();
@@ -91,6 +43,8 @@ public interface IModel {
 
      void addBlock(LinkedList<GameObject> block);
 
+     void removeBlock(int i);
+
      void setBlockElement(int i, int j, double x, double y);
 
      GameObject getBlockElement(int i, int j);
@@ -105,7 +59,7 @@ public interface IModel {
 
      void removeGameObject(int i);
 
-     void setGameObjects(int i, double x, double y);
+     void setGameObjects(int i, double x, double y, int TTL);
 
      Rectangle getGameObjectRectangle(int i);
 

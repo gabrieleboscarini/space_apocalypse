@@ -13,7 +13,7 @@ public class Model implements IModel {
     private static Model instance = null;
     private double angle;
 
-    GameObject spaceShip, TempObject, TempBlockElement;
+    GameObject spaceShip, TempObject,TempBlockElement;
     LinkedList<GameObject> TempBlock;
 
     private final LinkedList<GameObject> gameObjects = new LinkedList<>();
@@ -30,10 +30,10 @@ public class Model implements IModel {
     }
 
     public void initGame(){
-        spaceShip = new GameObject((int) ((width/2)-(width*0.0625/2)),(int) ((height/2)-(height*0.111/2)), 0,0,"spaceship");
+        spaceShip = new GameObject((int) ((width/2)-(width*0.0625/2)),(int) ((height/2)-(height*0.111/2)), 0,0,"spaceship", null,0);
         loadBooleanVar();
         loadIndexVar();
-        setMapElement("BulletType", 1);
+        setMapElement("BulletType", 0);
     }
 
     public void loadBooleanVar(){
@@ -95,6 +95,10 @@ public class Model implements IModel {
         blockList.add(block);
     }
 
+    public void removeBlock(int i){
+        blockList.remove(i);
+    }
+
     public void removeBlockElement(int i,int j){
         TempBlock = blockList.get(i);
         TempBlock.remove(j);
@@ -122,7 +126,12 @@ public class Model implements IModel {
     }
 
     public GameObject getGameObject(int i){
-        TempObject = gameObjects.get(i);
+        try {
+            TempObject = gameObjects.get(i);
+        }
+        catch(NullPointerException e) {
+            System.out.println("NullPointerException");
+        }
         return TempObject;
     }
 
@@ -134,7 +143,7 @@ public class Model implements IModel {
         gameObjects.remove(i);
     }
 
-    public void setGameObjects(int i,double x, double y){
+    public void setGameObjects(int i,double x, double y, int TTL){
         TempObject = gameObjects.get(i);
         if(TempObject.getType().equals("explosion")){
             TempObject.setScaleSX(x);
@@ -143,13 +152,15 @@ public class Model implements IModel {
         else{
             TempObject.setX(x);
             TempObject.setY(y);
+            if(TempObject.getType().equals("enemy_broken")|| TempObject.getType().equals("broken") || TempObject.getType().equals("enemy_2_broken"))
+            TempObject.setTTL(TTL);
         }
     }
 
     public Rectangle getGameObjectRectangle(int i){
         TempObject = gameObjects.get(i);
         Rectangle rect=null;
-            if (TempObject.getType().equals("bullet1") || TempObject.getType().equals("bullet2") || TempObject.getType().equals("bullet3") || TempObject.getType().equals("bullet4")) {
+            if (TempObject.getType().equals("bullet")) {
                 rect = TempObject.ObjectRectangle((int) TempObject.getX() + (int) ((width * 0.01894) / 4),
                         (int) TempObject.getY() + (int) ((height * 0.031191) / 4), (int) ((width * 0.01894) / 2),
                         (int) ((height * 0.031191) / 2));
@@ -158,6 +169,14 @@ public class Model implements IModel {
                 rect = TempObject.ObjectRectangle((int) TempObject.getX() + (int) ((width * 0.06) / 4),
                         (int) TempObject.getY() + (int) ((height * 0.066) / 4), (int) ((width * 0.06) / 2), (int) ((height * 0.066) / 2));
             }
+        if (TempObject.getType().equals("enemy2")) {
+            rect = TempObject.ObjectRectangle((int) TempObject.getX() +(int) ((width*0.0417)/4),
+                    (int) TempObject.getY() +(int) ((height*0.074)/4), (int) ((width*0.0417)/2),  (int) ((height*0.074)/2));
+        }
+        if (TempObject.getType().equals("enemy_2_bullet")) {
+            rect = TempObject.ObjectRectangle((int) TempObject.getX() + (int) ((width * 0.06) / 4),
+                    (int) TempObject.getY() + (int) ((height * 0.066) / 4), (int) ((width * 0.06) / 2), (int) ((height * 0.066) / 2));
+        }
             return rect;
     }
 

@@ -10,8 +10,6 @@ public interface IControllerForView {
 
     void openStartWindow();
 
-    //void closeStartWindow();
-
     double spaceShipX();
 
     double spaceShipY();
@@ -24,9 +22,13 @@ public interface IControllerForView {
 
     LinkedList<GameObject> GameObjectList();
 
+    LinkedList<LinkedList<GameObject>> BlockList();
+
+    LinkedList<GameObject> Block(int i);
+
     void createBlockElement();
 
-    void removeBlockElement(int i, GameObject object, String btype);
+    void removeBlockElement(int i, int h, GameObject object, String bcolor);
 
     void collisionDetection0();
 
@@ -38,7 +40,7 @@ public interface IControllerForView {
 
     void clearGameOver();
 
-    void increaseScore(int i);
+    void UpdateScore(int i);
 
     int getMapElement(String key);
 
@@ -47,6 +49,8 @@ public interface IControllerForView {
     void setBooleanMapElement(String key, boolean var);
 
     void setMapElement(String key, int var);
+
+    void enemyFire();
 
     void MoveSpaceShip();
 
@@ -62,12 +66,16 @@ public interface IControllerForView {
 
     GameObject BlockElement(int i, int j);
 
-    void createGameObject(double x, double y, double dx, double dy, String type);
+    void createGameObject(double x, double y, double dx, double dy, String type, String color, int TTL);
 
     void moveGameObject();
 
-    public void Savepunteggio(int indice0, int indice1, int indice2, int unita, int decine, int centinaia, int migliaia) throws IOException;
+    void Savepunteggio(int indice0, int indice1, int indice2, int unita, int decine, int centinaia, int migliaia) throws IOException;
 
-    public int readChampion(String type, int i)  throws IOException;
+    int readChampion(String type, int i)  throws IOException;
+
+    void updateChampion(int index1, int index2, int index3);
+
+    Point casualSpawn();
 
 }

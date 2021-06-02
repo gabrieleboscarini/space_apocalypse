@@ -22,10 +22,6 @@ public class ControllerForView implements IControllerForView {
         View.getInstance().openStartWindow();
     }
 
-    public void closeStartWindow() {
-        View.getInstance().closeStartWindow();
-    }
-
     public int getMapElement(String key){
         return Model.getInstance().getMapElement(key);
     }
@@ -74,6 +70,14 @@ public class ControllerForView implements IControllerForView {
         return Model.getInstance().getGameObject(i);
     }
 
+    public LinkedList<LinkedList<GameObject>> BlockList(){
+        return Model.getInstance().getblocklist();
+    }
+
+    public LinkedList<GameObject> Block(int i){
+        return Model.getInstance().getBlock(i);
+    }
+
     public GameObject BlockElement(int i, int j){
         return Model.getInstance().getBlockElement(i,j);
     }
@@ -84,24 +88,23 @@ public class ControllerForView implements IControllerForView {
 
     public Rectangle BlockElementRectangle(int i, int j){return Model.getInstance().getBlockElementRectangle(i,j);}
 
-    public void createGameObject(double x, double y, double dx, double dy, String type){
-        Model.getInstance().addGameObject(new GameObject(x,y,dx,dy,type));
+    public void createGameObject(double x, double y, double dx, double dy, String type, String color, int TTL){
+        Model.getInstance().addGameObject(new GameObject(x,y,dx,dy,type,color,TTL));
     }
 
-    public void createBlockElement(){
-
+    public Point casualSpawn(){
         double x = 0;
         double y = 0;
 
         int lato = (int)(Math.random() * 4) + 1;  //scelta randomica del lato dello spawn
 
         if(lato == 0){  //spawn dal lato sinistro
-            x = 0;
+            x = -(width * 0.0625);
             y = (Math.random() * (Model.getInstance().getScreenHeight()+1));  //scelta randomica del punto del lato da dove spawna
         }
 
         if(lato == 1){
-            y = 0;
+            y = -(height * 0.111);
             x = (Math.random() * (Model.getInstance().getScreenWidth() +1));
         }
 
@@ -114,51 +117,83 @@ public class ControllerForView implements IControllerForView {
             x = (Math.random() * (Model.getInstance().getScreenWidth() +1));
             y = Model.getInstance().getScreenHeight();
         }
+        return new Point((int) x, (int) y);
+    }
 
-        int n = (int)(Math.random() * 4) + 1;
-        int m = (int)(Math.random() * 4) + 1;
+    public void createBlockElement(){
+
+        Point start = casualSpawn();
+
+        int n = (int) (Math.random() * 4) + 1;
+        int m = (int) (Math.random() * 4) + 1;
+        Point[][] matrix = new Point[n][m];
+
         int distancex;
         int distancey = 0;
 
-        String [] type = {"capsul1", "capsul2", "capsul3", "capsul4"};
+        String[] color = {"green", "orange", "pink", "blue"};
         Random rd = new Random();
-
-        Point[][] matrix = new Point[n][m];
-        Point start = new Point((int)x,(int)y);
 
         LinkedList<GameObject> block = new LinkedList<>();
 
-        for(int i=0; i< n ; i++){
-            distancey += (width*0.03);
-            distancex = 0;
-            for(int j=0 ; j<m; j++){
-                matrix[i][j] = new Point((int)start.getX()+distancex, (int)start.getY()+distancey);
-                if(rd.nextBoolean()) {
-                    int casuale=rd.nextInt(type.length);
-                    block.add(new GameObject(matrix[i][j].getX(), matrix[i][j].getY(),spaceShipX(),spaceShipY(), type[casuale]));
+            for (int i = 0; i < n; i++) {
+                distancey += (width * 0.03);
+                distancex = 0;
+                for (int j = 0; j < m; j++) {
+                    matrix[i][j] = new Point((int) start.getX() + distancex, (int) start.getY() + distancey);
+                    if (rd.nextBoolean()) {
+                        int casuale = rd.nextInt(color.length);
+                        block.add(new GameObject(matrix[i][j].getX(), matrix[i][j].getY(), spaceShipX(), spaceShipY(), "asteroid", color[casuale], 0));
+                    }
+                    distancex += (width * 0.03);
                 }
-                distancex +=(width*0.03);
             }
-        }
-
-        Model.getInstance().addBlock(block);
+            Model.getInstance().addBlock(block);
     }
 
-    public void removeBlockElement(int i,GameObject object,String btype) {
-        if (object.getType().equals("capsul1") && btype.equals("bullet1") ||
-                object.getType().equals("capsul2") && btype.equals("bullet2") ||
-                object.getType().equals("capsul3") && btype.equals("bullet3") ||
-                object.getType().equals("capsul4") && btype.equals("bullet4")){
-            for(int j =0; j<Model.getInstance().getBlock(i).size(); j++){
-                if(BlockElement(i,j).getType().equals(object.getType())){
-                    Model.getInstance().removeBlockElement(i,j);
-                    j--;
-                }
-            }
-        }else{
-            createGameObject(object.getX(),object.getY(),spaceShipX(),spaceShipY(), "enemy");
-            AudioManager.getInstance().PlaySummon();
+    public void removeBlockElement(int i,int h, GameObject object,String bcolor) {  //rimuove tutti gli asteroidi dello stesso colore all'interno del blocco
 
+        double x1 = object.getX();
+        double y1 = object.getY();
+        double dx1 = object.getDestinationX();
+        double dy1 = object.getDestinationY();
+
+        if(Model.getInstance().getBlockElement(i,h).getType().equals("asteroid")) {
+            if (object.getColor().equals(bcolor)) {
+                for (int j = 0; j < Model.getInstance().getBlock(i).size(); j++) {
+
+                    double x = BlockElement(i, j).getX();
+                    double y = BlockElement(i, j).getY();
+                    double dx = BlockElement(i, j).getDestinationX();
+                    double dy = BlockElement(i, j).getDestinationY();
+
+                    if (BlockElement(i, j).getColor().equals(object.getColor())) {
+                        Model.getInstance().removeBlockElement(i, j);
+                        createGameObject(x, y, dx, dy, "broken", object.getColor(), 100);
+                        j--;
+                        UpdateScore(5);
+                    }
+                }
+            } else {
+                createGameObject(x1, y1, spaceShipX(), spaceShipY(), "enemy", null, 0);
+                Model.getInstance().removeBlockElement(i, h);
+                createGameObject(x1, y1, dx1, dy1, "broken", object.getColor(), 100);
+                AudioManager.getInstance().PlaySummon();
+                UpdateScore(1);
+            }
+            if(Model.getInstance().getBlock(i).size()==0)
+                Model.getInstance().removeBlock(i);
+        }
+    }
+
+    public void enemyFire(){
+        for(int i=0; i<Model.getInstance().getGameObjectList().size(); i++) {
+            if (GameObject(i).getType().equals("enemy2")) {
+                double x = GameObject(i).getX();
+                double y = GameObject(i).getY();
+                createGameObject(x, y, spaceShipX(), spaceShipY(), "enemy_2_bullet", null, 100);
+                AudioManager.getInstance().PlayCocomero();
+            }
         }
     }
 
@@ -168,8 +203,9 @@ public class ControllerForView implements IControllerForView {
                 Model.getInstance().setBlockElement(i,j,BlockElement(i,j).getX() + BlockElement(i,0).getDeltaX()*(width*0.003),
                         BlockElement(i,j).getY() + BlockElement(i,0).getDeltaY()*(width*0.003)
                 );
-                if(BlockElement(i,j).getX()<0 || BlockElement(i,j).getX()>(width*1.2) || BlockElement(i,j).getY()<0 || BlockElement(i,j).getY()>(height*1.2) ){
-                    Model.getInstance().removeBlockElement(i,j);
+                if(BlockElement(i,j).getX()<-(width/5) || BlockElement(i,j).getX()>(width*1.2) || BlockElement(i,j).getY()<-(height/5) || BlockElement(i,j).getY()>(height*1.2) ){
+                    Model.getInstance().removeBlock(i);
+                    break;
                 }
             }
         }
@@ -180,26 +216,42 @@ public class ControllerForView implements IControllerForView {
 
             String type = GameObject(i).getType();
 
-            if (GameObject(i).getX() < -200 || GameObject(i).getX() > (width*1.2) || GameObject(i).getY() < -200 || GameObject(i).getY() > (height*1.2)) {
+            if (GameObject(i).getX() < -(width*0.5) || GameObject(i).getX() > (width*1.5) || GameObject(i).getY()
+                    < -(height*0.5) || GameObject(i).getY() > (height*1.5) ||
+                    GameObject(i).getTTL()<0) {
                 Model.getInstance().removeGameObject(i);
-            } else
-            if(type.equals("bullet1") || type.equals("bullet2") || type.equals("bullet3") || type.equals("bullet4")){
+            }else if(type.equals("bullet")){
                 Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX()*(width*0.015),
-                        GameObject(i).getY() + GameObject(i).getDeltaY()*(width*0.015));
-            }else
-            if (GameObject(i).getType().equals("explosion")) {
-                Model.getInstance().setGameObjects(i, GameObject(i).getScaleDX(),
-                        GameObject(i).getScaleSX() + (width*0.000000026));
-                if (GameObject(i).getScaleSX() > (width*0.000000104)) {
-                    Model.getInstance().removeGameObject(i);
-                }
-
-            } else
-            if (GameObject(i).getType().equals("enemy")) {
+                        GameObject(i).getY() + GameObject(i).getDeltaY()*(width*0.015),0);
+            }else if (GameObject(i).getType().equals("enemy")) {
                 Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX() * (width*0.006),
-                        GameObject(i).getY() + GameObject(i).getDeltaY() * (width*0.006));
+                        GameObject(i).getY() + GameObject(i).getDeltaY() * (width*0.006),GameObject(i).getTTL() - 10);
+            } else if (GameObject(i).getType().equals("enemy_broken")) {
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() - GameObject(i).getDeltaX() * (width*0.006/3),
+                        GameObject(i).getY() - GameObject(i).getDeltaY() * (width*0.006/3),GameObject(i).getTTL() - 20);
+            }else if (GameObject(i).getType().equals("enemy2")) {
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX() * (width*0.006/1.5),
+                        GameObject(i).getY() + GameObject(i).getDeltaY() * (width*0.006/1.5),GameObject(i).getTTL() - 10);
+            }else if(type.equals("enemy_2_bullet")){
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() + GameObject(i).getDeltaX()*(width*0.008),
+                        GameObject(i).getY() + GameObject(i).getDeltaY()*(width*0.008),0);
+            }else if (GameObject(i).getType().equals("enemy_2_broken")) {
+                    Model.getInstance().setGameObjects(i, GameObject(i).getX() - GameObject(i).getDeltaX() * (width*0.006/5),
+                            GameObject(i).getY() - GameObject(i).getDeltaY() * (width*0.006/5),GameObject(i).getTTL() - 10);
+            }else if(GameObject(i).getType().equals("broken")){
+                Model.getInstance().setGameObjects(i, GameObject(i).getX() - GameObject(i).getDeltaX()*(width*0.003),
+                        GameObject(i).getY() - GameObject(i).getDeltaY()*(width*0.003), GameObject(i).getTTL() - 10);
             }
         }
+    }
+
+    public void spaceShipHit(){
+        setBooleanMapElement("isRunning", false);
+        AudioManager.getInstance().StopGameSong();
+        AudioManager.getInstance().PlayGameOverSe();
+        AudioManager.getInstance().PlayGameOverSong();
+        setBooleanMapElement("gameover", true);
+        setBooleanMapElement("resetGame", true);
     }
 
     public boolean checkCollision(Rectangle r, Rectangle r1){
@@ -207,20 +259,46 @@ public class ControllerForView implements IControllerForView {
         if(r.intersects(r1)){
             check = true;
         }
-
         return check;
     }
 
     public void collisionDetection0(){
         for(int k=0; k< GameObjectList().size(); k++){
-            for(int h =0; h< GameObjectList().size(); h++) {
-                if (h != k && !GameObject(h).getType().equals("explosion") && !GameObject(k).getType().equals("explosion"))
-                    if (checkCollision(Model.getInstance().getGameObjectRectangle(k), Model.getInstance().getGameObjectRectangle(h))) {
-                        Model.getInstance().removeGameObject(h);
-                        Model.getInstance().removeGameObject(k);
-                        AudioManager.getInstance().PlayScreamMonster();
-                        break;
-                    }
+
+            String type = GameObject(k).getType();
+
+            if(type.equals("enemy") || type.equals("enemy_2_bullet") || type.equals("enemy2")) {
+                if (checkCollision(Model.getInstance().getGameObjectRectangle(k), SpaceShipRectangle()))
+                    spaceShipHit();
+
+                for(int h =0; h< GameObjectList().size(); h++) {
+
+                    double x = GameObject(k).getX();
+                    double y = GameObject(k).getY();
+                    double dx = GameObject(k).getDestinationX();
+                    double dy = GameObject(k).getDestinationY();
+
+                    if (h != k && GameObject(h).getType().equals("bullet") && !type.equals("enemy_2_bullet"))
+                        if (checkCollision(Model.getInstance().getGameObjectRectangle(k), Model.getInstance().getGameObjectRectangle(h))) {
+                            Model.getInstance().removeGameObject(h);
+                            if(h<k){
+                                k--;
+                            }
+                            Model.getInstance().removeGameObject(k);
+                            if(type.equals("enemy")) {
+                                createGameObject(x, y, dx, dy, "enemy_broken", null, 100);
+                                AudioManager.getInstance().PlayScreamMonster();
+                                break;
+                            }
+                            if(type.equals("enemy2")){
+                                createGameObject(x, y, dx, dy, "enemy_2_broken", null, 100);
+                                AudioManager.getInstance().PlayScream();
+                                UpdateScore(7);
+                                break;
+                            }
+
+                        }
+                }
             }
         }
     }
@@ -230,35 +308,18 @@ public class ControllerForView implements IControllerForView {
         for (int i = 0; i < Model.getInstance().getblocklist().size() ; i++) {
             for (int j = 0; j < Model.getInstance().getBlock(i).size(); j++) {
                 if (checkCollision(SpaceShipRectangle(), BlockElementRectangle(i,j))) {
-                    setBooleanMapElement("isRunning", false);
-                    AudioManager.getInstance().StopGameSong();
-                    AudioManager.getInstance().PlayCocomero();
-                    AudioManager.getInstance().PlayGameOverSe();
-                    AudioManager.getInstance().PlayGameOverSong();
-                    setBooleanMapElement("gameover", true);
-                    setBooleanMapElement("resetGame", true);
+                    spaceShipHit();
                     break outerloop;
-                } else
-                    for (int k = 0; k < GameObjectList().size(); k++) {
-                        if(!GameObject(k).getType().equals("explosion"))
-                            if (checkCollision(Model.getInstance().getGameObjectRectangle(k), BlockElementRectangle(i, j)) &&
-                                    !GameObject(k).getType().equals("enemy")) {
-                                AudioManager.getInstance().PlayExploding();
-                                removeBlockElement(i, BlockElement(i, j), GameObject(k).getType());
-                                Model.getInstance().removeGameObject(k);
-                                increaseScore(3);
-                                break outerloop;
-                            } else if(checkCollision(Model.getInstance().getGameObjectRectangle(k),SpaceShipRectangle()) && GameObject(k).getType().equals("enemy")){
-                                setBooleanMapElement("isRunning", false);
-                                AudioManager.getInstance().StopGameSong();
-                                AudioManager.getInstance().PlayCocomero();
-                                AudioManager.getInstance().PlayGameOverSe();
-                                AudioManager.getInstance().PlayGameOverSong();
-                                setBooleanMapElement("gameover", true);
-                                setBooleanMapElement("resetGame", true);
-                                break outerloop;
-                            }
+                }else for (int k = 0; k < GameObjectList().size(); k++) {
+                    if(GameObject(k).getType().equals("bullet")){
+                        if (checkCollision(Model.getInstance().getGameObjectRectangle(k), BlockElementRectangle(i, j))) {
+                            AudioManager.getInstance().PlayExploding();
+                            removeBlockElement(i, j, BlockElement(i, j), GameObject(k).getColor());
+                            Model.getInstance().removeGameObject(k);
+                            break outerloop;
+                        }
                     }
+                }
             }
         }
     }
@@ -268,7 +329,7 @@ public class ControllerForView implements IControllerForView {
         collisionDetection1();
     }
 
-    public void increaseScore(int i){
+    public void UpdateScore(int i){
 
         int unita = getMapElement("unita");
         int decine = getMapElement("decine");
@@ -297,7 +358,7 @@ public class ControllerForView implements IControllerForView {
     public void MoveSpaceShip(){
         double speed = width*0.005;
         if(getBooleanMapElement("MoveUp")){
-            if(!(Model.getInstance().getSpaceShipY() < 0))
+            if(!(Model.getInstance().getSpaceShipY() < -(height*0.111)))
                 Model.getInstance().setSpaceShip(spaceShipX(), (spaceShipY() -speed));
             else
                 Model.getInstance().setSpaceShip(spaceShipX(), height);
@@ -315,7 +376,7 @@ public class ControllerForView implements IControllerForView {
                 Model.getInstance().setSpaceShip(0, spaceShipY());
         }
         if(getBooleanMapElement("MoveLeft")){
-            if(!(Model.getInstance().getSpaceShipX() < 0))
+            if(!(Model.getInstance().getSpaceShipX() < -(width*0.0625)))
                 Model.getInstance().setSpaceShip(spaceShipX() -speed, spaceShipY());
             else
                 Model.getInstance().setSpaceShip(width, spaceShipY());
@@ -381,6 +442,21 @@ public class ControllerForView implements IControllerForView {
             indice = Character.getNumericValue(c);
         }
         return indice;
+    }
+
+    public void updateChampion(int index1, int index2, int index3){
+        int puntcor = getMapElement("score");
+        try {
+            if (puntcor > readChampion("champ", 0))
+                Savepunteggio(index1,
+                        index2, index3,
+                        getMapElement("unita"),
+                        getMapElement("decine") , getMapElement("centinaia"),
+                        getMapElement("migliaia"));
+
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
     }
 
     public static IControllerForView getInstance() {

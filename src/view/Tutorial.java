@@ -83,7 +83,7 @@ public class Tutorial extends JPanel implements MouseListener {
         }
 
         try {
-            this.player1_torretta1 = ImageIO.read(new File("utils/img/SP_SH/Torretta_proiettile_1.png"));
+            this.player1_torretta1 = ImageIO.read(new File("utils/img/SP_SH/Torretta_proiettile_0.png"));
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
